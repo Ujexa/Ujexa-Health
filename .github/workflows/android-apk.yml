@@ -41,6 +41,15 @@ jobs:
             flutter create --platforms=android --org com.ujexa.health --project-name ujexa_health .
           fi
 
+      - name: Remove generated placeholder widget test
+        shell: bash
+        run: |
+          # flutter create generates a starter test that assumes a MyApp widget.
+          # Ujexa Health boots through main() and does not define that template widget.
+          if [ -f test/widget_test.dart ] && grep -q "MyApp" test/widget_test.dart; then
+            rm test/widget_test.dart
+          fi
+
       - name: Resolve dependencies
         run: flutter pub get
 
