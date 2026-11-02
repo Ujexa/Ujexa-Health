@@ -2139,7 +2139,7 @@ class _SymptomJournalInsightsPanelState extends State<SymptomJournalInsightsPane
             Row(children:[Expanded(child:Text(p.name,style:const TextStyle(fontWeight:FontWeight.w700,color:Color(0xFF171B3D)))),Text('${p.episodes} ${p.episodes==1?'episode':'episodes'}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E)))]),
             const SizedBox(height:3),
             Text('Average self-rated severity ${p.averageSeverity.toStringAsFixed(1)}/10 · highest ${p.highestSeverity}/10 · latest ${p.latestAt.toLocal().toString().split(' ').first}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E))),
-            if(p.commonTriggers.isNotEmpty)Text('Commonly noted possible triggers: ${p.commonTriggers.take(3).map((e)=>e.key).join(', ')}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E))),
+            if(p.commonTriggers.isNotEmpty)Text('Commonly noted possible triggers: ${p.commonTriggers.take(3).map((e)=>e).join(', ')}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E))),
           ]))),
           const Divider(height:22),
           const Text('Journal self-ratings',style:TextStyle(fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),

@@ -16,7 +16,7 @@ void main() {
       expect(result.patterns.single.episodes,2);
       expect(result.patterns.single.averageSeverity,6);
       expect(result.patterns.single.highestSeverity,8);
-      expect(result.patterns.single.commonTriggers.first.key,'poor sleep');
+      expect(result.patterns.single.commonTriggers.first,'poor sleep');
     });
     test('summarizes journal scores without mixing in symptom records', () {
       final result=SymptomJournalIntelligence.analyze([
