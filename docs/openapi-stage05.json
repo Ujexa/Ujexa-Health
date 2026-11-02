@@ -1,0 +1,1190 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Ujexa Health API",
+    "description": "Identity and device-trust foundation. Health records and cryptographic key recovery are deliberately out of scope.",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/v1/identity/device-challenges": {
+      "post": {
+        "tags": [
+          "identity & device trust"
+        ],
+        "summary": "Create Device Challenge",
+        "operationId": "create_device_challenge_v1_identity_device_challenges_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChallengeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/identity/devices": {
+      "get": {
+        "tags": [
+          "identity & device trust"
+        ],
+        "summary": "List Devices",
+        "operationId": "list_devices_v1_identity_devices_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Devices V1 Identity Devices Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "identity & device trust"
+        ],
+        "summary": "Enroll Device",
+        "operationId": "enroll_device_v1_identity_devices_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceEnrollRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/identity/devices/{device_id}": {
+      "delete": {
+        "tags": [
+          "identity & device trust"
+        ],
+        "summary": "Revoke Device",
+        "operationId": "revoke_device_v1_identity_devices__device_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Device Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/sessions/revoke-current": {
+      "post": {
+        "tags": [
+          "identity & device trust"
+        ],
+        "summary": "Revoke Current Session",
+        "operationId": "revoke_current_session_v1_identity_sessions_revoke_current_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/vaults/{vault_id}/objects": {
+      "post": {
+        "tags": [
+          "encrypted patient vault"
+        ],
+        "summary": "Put Encrypted Object",
+        "operationId": "put_encrypted_object_v1_vaults__vault_id__objects_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptedObjectInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "encrypted patient vault"
+        ],
+        "summary": "List Encrypted Objects",
+        "operationId": "list_encrypted_objects_v1_vaults__vault_id__objects_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vaults/{vault_id}/objects/{object_id}/{version}": {
+      "get": {
+        "tags": [
+          "encrypted patient vault"
+        ],
+        "summary": "Get Encrypted Object",
+        "operationId": "get_encrypted_object_v1_vaults__vault_id__objects__object_id___version__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Object Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "encrypted patient vault"
+        ],
+        "summary": "Delete Encrypted Object",
+        "operationId": "delete_encrypted_object_v1_vaults__vault_id__objects__object_id___version__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Object Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vaults/{vault_id}/key-envelopes": {
+      "post": {
+        "tags": [
+          "encrypted patient vault"
+        ],
+        "summary": "Put Key Envelope",
+        "operationId": "put_key_envelope_v1_vaults__vault_id__key_envelopes_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KeyEnvelopeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "encrypted patient vault"
+        ],
+        "summary": "List Key Envelopes",
+        "operationId": "list_key_envelopes_v1_vaults__vault_id__key_envelopes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/health-records/{vault_id}/records": {
+      "post": {
+        "tags": [
+          "encrypted health records"
+        ],
+        "summary": "Create Record Version",
+        "operationId": "create_record_version_v1_health_records__vault_id__records_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptedHealthRecordInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "encrypted health records"
+        ],
+        "summary": "List Record Versions",
+        "operationId": "list_record_versions_v1_health_records__vault_id__records_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/health-records/{vault_id}/records/{record_id}/{version}": {
+      "get": {
+        "tags": [
+          "encrypted health records"
+        ],
+        "summary": "Read Record Version",
+        "operationId": "read_record_version_v1_health_records__vault_id__records__record_id___version__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Record Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "encrypted health records"
+        ],
+        "summary": "Delete Record Version",
+        "operationId": "delete_record_version_v1_health_records__vault_id__records__record_id___version__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Record Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/health-records/{vault_id}/sync": {
+      "get": {
+        "tags": [
+          "encrypted health records"
+        ],
+        "summary": "Sync Changes",
+        "description": "Return opaque change journal entries after a client cursor.",
+        "operationId": "sync_changes_v1_health_records__vault_id__sync_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vault_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vault Id"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "After"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 200,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "operations"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/identity/me": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "summary": "Identity Profile",
+        "operationId": "identity_profile_v1_identity_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChallengeResponse": {
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "title": "Challenge Id"
+          },
+          "nonce": {
+            "type": "string",
+            "title": "Nonce"
+          },
+          "expires_in_seconds": {
+            "type": "integer",
+            "title": "Expires In Seconds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "challenge_id",
+          "nonce",
+          "expires_in_seconds"
+        ],
+        "title": "ChallengeResponse"
+      },
+      "DeviceEnrollRequest": {
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 36,
+            "title": "Challenge Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "public_key": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 40,
+            "title": "Public Key",
+            "description": "Base64url-encoded raw 32-byte Ed25519 public key"
+          },
+          "encryption_public_key": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 40,
+            "title": "Encryption Public Key",
+            "description": "Base64url-encoded raw 32-byte X25519 key-agreement public key"
+          },
+          "signature": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 80,
+            "title": "Signature",
+            "description": "Base64url signature over the documented enrollment message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "challenge_id",
+          "name",
+          "public_key",
+          "encryption_public_key",
+          "signature"
+        ],
+        "title": "DeviceEnrollRequest"
+      },
+      "DeviceResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "last_seen_at": {
+            "type": "string",
+            "title": "Last Seen At"
+          },
+          "is_current_device": {
+            "type": "boolean",
+            "title": "Is Current Device",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "last_seen_at"
+        ],
+        "title": "DeviceResponse"
+      },
+      "EncryptedHealthRecordInput": {
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 36,
+            "title": "Record Id"
+          },
+          "version": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 1.0,
+            "title": "Version"
+          },
+          "algorithm": {
+            "type": "string",
+            "pattern": "^AES-256-GCM$",
+            "title": "Algorithm"
+          },
+          "nonce": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 16,
+            "title": "Nonce"
+          },
+          "ciphertext": {
+            "type": "string",
+            "maxLength": 12000000,
+            "minLength": 22,
+            "title": "Ciphertext"
+          },
+          "ciphertext_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Ciphertext Sha256"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "record_id",
+          "version",
+          "algorithm",
+          "nonce",
+          "ciphertext",
+          "ciphertext_sha256"
+        ],
+        "title": "EncryptedHealthRecordInput"
+      },
+      "EncryptedObjectInput": {
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 36,
+            "title": "Object Id"
+          },
+          "version": {
+            "type": "integer",
+            "maximum": 2147483647.0,
+            "minimum": 1.0,
+            "title": "Version"
+          },
+          "algorithm": {
+            "type": "string",
+            "pattern": "^AES-256-GCM$",
+            "title": "Algorithm"
+          },
+          "nonce": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 16,
+            "title": "Nonce"
+          },
+          "ciphertext": {
+            "type": "string",
+            "maxLength": 12000000,
+            "minLength": 22,
+            "title": "Ciphertext"
+          },
+          "ciphertext_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Ciphertext Sha256"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "object_id",
+          "version",
+          "algorithm",
+          "nonce",
+          "ciphertext",
+          "ciphertext_sha256"
+        ],
+        "title": "EncryptedObjectInput"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "KeyEnvelopeInput": {
+        "properties": {
+          "envelope_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 36,
+            "title": "Envelope Id"
+          },
+          "recipient_type": {
+            "type": "string",
+            "pattern": "^(recovery|device)$",
+            "title": "Recipient Type"
+          },
+          "recipient_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 36
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipient Id"
+          },
+          "algorithm": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 10,
+            "title": "Algorithm"
+          },
+          "envelope_json": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Envelope Json"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "envelope_id",
+          "recipient_type",
+          "algorithm",
+          "envelope_json"
+        ],
+        "title": "KeyEnvelopeInput"
+      },
+      "RevokeResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "revoked_id": {
+            "type": "string",
+            "title": "Revoked Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "revoked_id"
+        ],
+        "title": "RevokeResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

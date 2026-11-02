@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f6ff"><title>Ujexa Health — Your Health. Your History. Your Intelligence.</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Ujexa Health home"><span class="brand-mark">♡<i>⌁</i></span><span>Ujexa <b>Health</b></span></a>
+    <div class="top-actions"><button class="icon-btn" aria-label="Notifications" id="notifications">♧<i class="dot"></i></button><button class="avatar" aria-label="Open profile">K</button></div>
+  </header>
+  <main id="main">
+    <section class="greeting"><div><p class="eyebrow">YOUR PERSONAL HEALTH SPACE</p><h1>Your health, in one place <span>✧</span></h1><p class="muted">A clearer picture begins with the information you choose to keep.</p></div></section>
+    <section class="hero-card">
+      <div class="ring-wrap"><div class="ring"><div class="ring-inner"><span class="heart">♥</span><strong>85<small>%</small></strong><span>Daily progress</span></div></div></div>
+      <div class="hero-copy"><span class="pill">PATIENT-OWNED RECORD</span><h2>Your story, securely designed.</h2><p class="muted">Capture checkups, observations, medications and documents in one evolving health history.</p></div>
+      <div class="hero-orb"></div>
+    </section>
+    <section class="empty-card" style="margin:20px 0"><h3>Start with a real record</h3><p class="muted">Log a checkup, add a vital reading or record a medication. Entries in this prototype are stored locally in this browser only.</p><button class="btn primary" data-action="checkup">Log a checkup</button></section>
+    <section class="quick-section"><div class="section-heading"><h2>Quick actions</h2><span class="muted small">Your everyday tools</span></div>
+      <div class="quick-grid">
+        <button class="quick pink" data-action="vitals"><span>♥</span>Log vitals</button>
+        <button class="quick blue" data-action="note"><span>▤</span>Add note</button>
+        <button class="quick cyan" data-action="document"><span>▣</span>Scan document</button>
+        <button class="quick violet" id="open-add"><span>⠿</span>More</button>
+        <button class="quick peach" data-action="checkup"><span>＋</span>Log checkup</button>
+      </div>
+    </section>
+    <section class="recent"><div class="section-heading"><h2>Recent activity</h2><button class="text-btn" data-tab="records">View records →</button></div></section>
+  </main>
+  <main id="secondary" class="hidden"></main>
+  <div class="privacy-notice">Prototype only · Local browser storage is not encrypted. Do not enter real health information.</div>
+  <nav class="bottom-nav" aria-label="Main navigation"><button class="nav-item active" data-tab="home"><span>⌂</span>Home</button><button class="nav-item" data-tab="records"><span>▱</span>Records</button><button class="nav-add" id="nav-add" aria-label="Add health record">＋</button><button class="nav-item" data-tab="insights"><span>▥</span>Insights</button><button class="nav-item" data-tab="profile"><span>♙</span>Profile</button></nav>
+</div>
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="add-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="handle"></div><div class="sheet-head"><h2 id="sheet-title">Add to your health record</h2><button class="close" id="close-sheet" aria-label="Close">×</button></div>
+  <div class="add-grid">
+    <button class="add-tile lavender" data-action="symptoms"><span>🩺</span>Symptoms</button><button class="add-tile peach" data-action="medication"><span>💊</span>Medication</button><button class="add-tile sky" data-action="vitals"><span>♢</span>Vitals</button>
+    <button class="add-tile rose" data-action="meal"><span>🍎</span>Meal</button><button class="add-tile mint" data-action="activity"><span>🏃</span>Activity</button><button class="add-tile lavender" data-action="sleep"><span>🛏️</span>Sleep</button>
+    <button class="add-tile sky" data-action="document"><span>▣</span>Medical document</button><button class="add-tile peach" data-action="appointment"><span>▦</span>Appointment</button><button class="add-tile pink" data-action="note"><span>🎙</span>Voice note</button>
+    <button class="add-tile rose" data-action="checkup"><span>✚</span>Log checkup</button>
+  </div>
+</section>
+<section class="sheet form-sheet" id="form-sheet" role="dialog" aria-modal="true" aria-labelledby="form-title">
+ <div class="handle"></div><div class="sheet-head"><h2 id="form-title">Add record</h2><button class="close" id="close-form" aria-label="Close">×</button></div>
+ <form id="record-form"><div id="form-fields"></div><div class="form-actions"><button type="button" class="btn secondary" id="cancel-form">Cancel</button><button type="submit" class="btn primary">Save record</button></div></form>
+</section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body></html>

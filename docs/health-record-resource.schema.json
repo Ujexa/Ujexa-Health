@@ -1,0 +1,1308 @@
+{
+  "$defs": {
+    "AllergyRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "allergy",
+          "default": "allergy",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "substance": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Substance",
+          "type": "string"
+        },
+        "reaction": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reaction"
+        },
+        "severity": {
+          "default": "unknown",
+          "enum": [
+            "mild",
+            "moderate",
+            "severe",
+            "unknown"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "default": "unknown",
+          "enum": [
+            "active",
+            "inactive",
+            "entered_in_error",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "onset_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onset Date"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "substance",
+        "provenance"
+      ],
+      "title": "AllergyRecord",
+      "type": "object"
+    },
+    "ConditionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "condition",
+          "default": "condition",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "display": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Display",
+          "type": "string"
+        },
+        "clinical_code_system": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clinical Code System"
+        },
+        "clinical_code": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clinical Code"
+        },
+        "status": {
+          "$ref": "#/$defs/ConditionStatus",
+          "default": "unknown"
+        },
+        "onset_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onset Date"
+        },
+        "resolution_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution Date"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "display",
+        "provenance"
+      ],
+      "title": "ConditionRecord",
+      "type": "object"
+    },
+    "ConditionStatus": {
+      "enum": [
+        "active",
+        "resolved",
+        "inactive",
+        "in_remission",
+        "unknown"
+      ],
+      "title": "ConditionStatus",
+      "type": "string"
+    },
+    "EncounterRecord": {
+      "additionalProperties": false,
+      "description": "A visit/checkup container. It does not itself imply a diagnosis.",
+      "properties": {
+        "resource_type": {
+          "const": "encounter",
+          "default": "encounter",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "encounter_type": {
+          "enum": [
+            "routine_checkup",
+            "follow_up",
+            "urgent_care",
+            "emergency",
+            "specialist_visit",
+            "telehealth",
+            "other"
+          ],
+          "title": "Encounter Type",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "in_progress",
+            "completed",
+            "cancelled",
+            "entered_in_error"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "provider_name": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Name"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "clinical_notes": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clinical Notes"
+        },
+        "follow_up_instructions": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Follow Up Instructions"
+        },
+        "related_observation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Related Observation Ids",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "encounter_type",
+        "status",
+        "started_at",
+        "provenance"
+      ],
+      "title": "EncounterRecord",
+      "type": "object"
+    },
+    "MedicalDocumentReference": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "document_reference",
+          "default": "document_reference",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "document_type": {
+          "enum": [
+            "lab_report",
+            "prescription",
+            "discharge_summary",
+            "imaging_report",
+            "referral",
+            "vaccination_record",
+            "insurance",
+            "other"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "media_type": {
+          "maxLength": 100,
+          "minLength": 3,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "encrypted_blob_id": {
+          "title": "Encrypted Blob Id",
+          "type": "string"
+        },
+        "document_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Date"
+        },
+        "issuing_organization": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issuing Organization"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "document_type",
+        "title",
+        "media_type",
+        "encrypted_blob_id",
+        "provenance"
+      ],
+      "title": "MedicalDocumentReference",
+      "type": "object"
+    },
+    "MedicationDoseLog": {
+      "additionalProperties": false,
+      "description": "Patient-reported medication event; not proof of ingestion.",
+      "properties": {
+        "resource_type": {
+          "const": "medication_dose_log",
+          "default": "medication_dose_log",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "medication_record_id": {
+          "title": "Medication Record Id",
+          "type": "string"
+        },
+        "event_type": {
+          "enum": [
+            "taken",
+            "missed",
+            "skipped",
+            "unknown"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "dose_taken": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dose Taken"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "medication_record_id",
+        "event_type",
+        "occurred_at",
+        "provenance"
+      ],
+      "title": "MedicationDoseLog",
+      "type": "object"
+    },
+    "MedicationStatement": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "medication_statement",
+          "default": "medication_statement",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "medication_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Medication Name",
+          "type": "string"
+        },
+        "strength": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strength"
+        },
+        "dose": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dose"
+        },
+        "route": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Route"
+        },
+        "frequency": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frequency"
+        },
+        "status": {
+          "default": "unknown",
+          "enum": [
+            "active",
+            "on_hold",
+            "completed",
+            "stopped",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "prescriber": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prescriber"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "refills_remaining": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refills Remaining"
+        },
+        "refill_due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refill Due Date"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "medication_name",
+        "provenance"
+      ],
+      "title": "MedicationStatement",
+      "type": "object"
+    },
+    "ObservationRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "observation",
+          "default": "observation",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "code": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "display": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Display",
+          "type": "string"
+        },
+        "status": {
+          "default": "final",
+          "enum": [
+            "preliminary",
+            "final",
+            "amended",
+            "cancelled",
+            "entered_in_error"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "effective_at": {
+          "format": "date-time",
+          "title": "Effective At",
+          "type": "string"
+        },
+        "value_quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value Quantity"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value_text": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value Text"
+        },
+        "components": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": "Components",
+          "type": "object"
+        },
+        "body_site": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body Site"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        },
+        "encounter_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Encounter Id"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "code",
+        "display",
+        "effective_at",
+        "provenance"
+      ],
+      "title": "ObservationRecord",
+      "type": "object"
+    },
+    "PatientProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "patient_profile",
+          "default": "patient_profile",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferred Name"
+        },
+        "legal_name": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Legal Name"
+        },
+        "date_of_birth": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Of Birth"
+        },
+        "sex_at_birth": {
+          "default": "not_recorded",
+          "enum": [
+            "female",
+            "male",
+            "intersex",
+            "unknown",
+            "not_recorded"
+          ],
+          "title": "Sex At Birth",
+          "type": "string"
+        },
+        "gender_identity": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gender Identity"
+        },
+        "blood_group": {
+          "default": "not_recorded",
+          "enum": [
+            "A+",
+            "A-",
+            "B+",
+            "B-",
+            "AB+",
+            "AB-",
+            "O+",
+            "O-",
+            "unknown",
+            "not_recorded"
+          ],
+          "title": "Blood Group",
+          "type": "string"
+        },
+        "height_cm": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 300,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height Cm"
+        },
+        "emergency_contact_name": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emergency Contact Name"
+        },
+        "emergency_contact_relationship": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emergency Contact Relationship"
+        },
+        "emergency_contact_phone": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emergency Contact Phone"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "provenance"
+      ],
+      "title": "PatientProfile",
+      "type": "object"
+    },
+    "ProcedureRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_type": {
+          "const": "procedure",
+          "default": "procedure",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "display": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Display",
+          "type": "string"
+        },
+        "performed_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Performed Date"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outcome"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 3000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "provenance": {
+          "$ref": "#/$defs/RecordProvenance"
+        }
+      },
+      "required": [
+        "resource_id",
+        "version",
+        "display",
+        "provenance"
+      ],
+      "title": "ProcedureRecord",
+      "type": "object"
+    },
+    "ProvenanceSource": {
+      "enum": [
+        "patient",
+        "clinician",
+        "imported_document",
+        "device",
+        "application"
+      ],
+      "title": "ProvenanceSource",
+      "type": "string"
+    },
+    "RecordProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/ProvenanceSource"
+        },
+        "recorded_by": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recorded By"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization"
+        },
+        "source_document_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Document Id"
+        },
+        "source_reference": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Reference"
+        },
+        "verification_status": {
+          "default": "unverified",
+          "enum": [
+            "unverified",
+            "patient_confirmed",
+            "clinician_verified"
+          ],
+          "title": "Verification Status",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "source",
+        "recorded_at"
+      ],
+      "title": "RecordProvenance",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "allergy": "#/$defs/AllergyRecord",
+      "condition": "#/$defs/ConditionRecord",
+      "document_reference": "#/$defs/MedicalDocumentReference",
+      "encounter": "#/$defs/EncounterRecord",
+      "medication_dose_log": "#/$defs/MedicationDoseLog",
+      "medication_statement": "#/$defs/MedicationStatement",
+      "observation": "#/$defs/ObservationRecord",
+      "patient_profile": "#/$defs/PatientProfile",
+      "procedure": "#/$defs/ProcedureRecord"
+    },
+    "propertyName": "resource_type"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PatientProfile"
+    },
+    {
+      "$ref": "#/$defs/ConditionRecord"
+    },
+    {
+      "$ref": "#/$defs/AllergyRecord"
+    },
+    {
+      "$ref": "#/$defs/ProcedureRecord"
+    },
+    {
+      "$ref": "#/$defs/EncounterRecord"
+    },
+    {
+      "$ref": "#/$defs/ObservationRecord"
+    },
+    {
+      "$ref": "#/$defs/MedicationStatement"
+    },
+    {
+      "$ref": "#/$defs/MedicalDocumentReference"
+    },
+    {
+      "$ref": "#/$defs/MedicationDoseLog"
+    }
+  ]
+}

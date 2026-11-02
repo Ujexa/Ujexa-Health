@@ -1,0 +1,19 @@
+[project]
+name = "ujexa-health-api"
+version = "0.2.0"
+description = "Ujexa Health API — identity and device trust foundation"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "SQLAlchemy>=2.0,<3",
+  "pydantic-settings>=2.5,<3",
+  "PyJWT[crypto]>=2.9,<3",
+  "cryptography>=43,<46",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9", "httpx>=0.27,<1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

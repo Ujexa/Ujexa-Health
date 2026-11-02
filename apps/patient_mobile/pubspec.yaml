@@ -1,0 +1,29 @@
+name: ujexa_health
+description: Patient-owned privacy-first health records.
+publish_to: 'none'
+version: 0.9.0+9
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite_sqlcipher: ^3.1.0
+  path: ^1.9.0
+  flutter_secure_storage: ^9.2.2
+  cryptography: ^2.7.0
+  uuid: ^4.5.1
+  file_picker: ^8.1.7
+  google_mlkit_text_recognition: ^0.15.0
+  pdfx: ^2.9.2
+  path_provider: ^2.1.5
+  flutter_local_notifications: ^19.4.2
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/ujexa_health_mark.png
