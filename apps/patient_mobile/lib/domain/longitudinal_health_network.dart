@@ -183,7 +183,9 @@ class _DenseLayer {
     _lastOutput=List.generate(outputs,(o){
       var z=biases[o];
       for(var i=0;i<inputs;i++){z+=weights[o][i]*x[i];}
-      return tanh(z);
+      final bounded = z.clamp(-10.0, 10.0).toDouble();
+      final e = exp(2 * bounded);
+      return (e - 1) / (e + 1);
     });
     return _lastOutput;
   }
