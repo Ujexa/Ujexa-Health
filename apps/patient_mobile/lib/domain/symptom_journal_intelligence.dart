@@ -68,7 +68,7 @@ class SymptomJournalIntelligence {
         averageSeverity: severities.isEmpty ? 0 : severities.reduce((a,b)=>a+b)/severities.length,
         latestAt: rows.last.recordedAt,
         highestSeverity: severities.isEmpty ? 0 : severities.reduce((a,b)=>a>b?a:b).round(),
-        commonTriggers: triggerCounts.entries.toList()..sort((a,b)=>b.value.compareTo(a.value)),
+        commonTriggers: (triggerCounts.entries.toList()..sort((a,b)=>b.value.compareTo(a.value))).map((e)=>e.key).toList(),
       ));
     }
     patterns.sort((a,b)=>b.episodes.compareTo(a.episodes));
