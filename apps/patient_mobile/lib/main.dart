@@ -626,6 +626,13 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
     ]),
   );
 
+  Widget _adherenceMetric(String label, int count, Color color) => Expanded(
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text('$count', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color)),
+      Text(label, style: const TextStyle(fontSize: 10, color: muted)),
+    ]),
+  );
+
   Widget _panel({required Widget child}) => Container(
     width: double.infinity,
     padding: const EdgeInsets.all(16),
