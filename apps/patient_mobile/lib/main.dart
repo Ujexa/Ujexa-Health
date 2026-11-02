@@ -1160,7 +1160,7 @@ class _RecordHistoryPageState extends State<RecordHistoryPage>{
        ...previous.map((x)=>ListTile(title:Text('Version ${x.version}'),subtitle:Text(x.recordedAt.toLocal().toString()))),
        ListTile(title:Text('Current · Version ${r.version}'),subtitle:Text(r.recordedAt.toLocal().toString())),
       ])));
-    })),
+    }))),
   ]);
  }));
 }
@@ -1881,7 +1881,7 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                           padding:const EdgeInsets.symmetric(horizontal:9,vertical:5),
                           decoration:BoxDecoration(color:const Color(0xFFF2EAFE),borderRadius:BorderRadius.circular(12)),
                           child:Text(t.toString(),style:const TextStyle(fontSize:11,fontWeight:FontWeight.w800,color:Color(0xFF7938DB)))))),
-                      ]))
+                      ])),
                     if (p['prescriber'] != null) Text('Prescriber: ${p['prescriber']}', style: const TextStyle(fontSize: 12, color: muted)),
                     if (p['start_date'] != null || p['end_date'] != null) Text('Period: ${_date(p['start_date'])} → ${_date(p['end_date'])}', style: const TextStyle(fontSize: 12, color: muted)),
                     if (p['quantity'] != null || p['refills_remaining'] != null) Text('Quantity: ${p['quantity'] ?? '—'} · Refills remaining: ${p['refills_remaining'] ?? '—'}', style: const TextStyle(fontSize: 12, color: muted)),
