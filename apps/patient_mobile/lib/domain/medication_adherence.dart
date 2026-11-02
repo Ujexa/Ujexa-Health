@@ -1,5 +1,5 @@
 
-import 'health_records.dart';
+import '../data/patient_record_repository.dart';
 
 enum DoseState { taken, missed, skipped, overdue, upcoming }
 class ScheduledDose {
