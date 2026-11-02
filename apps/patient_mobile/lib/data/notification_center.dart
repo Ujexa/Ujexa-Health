@@ -42,7 +42,7 @@ class HealthNotificationCenter {
     if (_ready) return;
     tzdata.initializeTimeZones();
     final local = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(local.identifier));
+    tz.setLocalLocation(tz.getLocation(local));
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const settings = InitializationSettings(android: android,
       iOS: DarwinInitializationSettings(requestAlertPermission: true,
