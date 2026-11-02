@@ -89,7 +89,7 @@ class HealthNotificationCenter {
     await _plugin.zonedSchedule(notificationId,title,body,
       tz.TZDateTime.from(when,tz.local),details,
       androidScheduleMode:AndroidScheduleMode.inexactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:UILocalNotificationDateInterpretation.absoluteTime);
+
   }
 
   Future<void> addInternal({required String title, required String body,
@@ -162,7 +162,7 @@ class HealthNotificationCenter {
           'Prescribed dose: $prescribedDose · Scheduled time ${times[slot]}',
           tz.TZDateTime.from(scheduled,tz.local),details,
           androidScheduleMode:AndroidScheduleMode.inexactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:UILocalNotificationDateInterpretation.absoluteTime);
+
       }
     }
   }
