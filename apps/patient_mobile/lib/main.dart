@@ -214,8 +214,8 @@ class RecordsPage extends StatefulWidget {
 }
 
 class _RecordsPageState extends State<RecordsPage> {
-  Color get ink => Theme.of(context).colorScheme.onSurface;
-  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
+  static const ink = Color(0xFF171B3D);
+  static const muted = Color(0xFF69708E);
   late Future<List<PatientRecord>> _future;
   final _search = TextEditingController();
   String _category = 'all';
@@ -567,8 +567,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
-  Color get ink => Theme.of(context).colorScheme.onSurface;
-  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
+  static const ink = Color(0xFF171B3D);
+  static const muted = Color(0xFF69708E);
   static const _facts = <String>[
     'Your heart beats around 100,000 times in a typical day.',
     'Water helps regulate body temperature and transport nutrients.',
@@ -689,8 +689,8 @@ class HealthInsightsPage extends StatefulWidget {
 }
 
 class _HealthInsightsPageState extends State<HealthInsightsPage> {
-  Color get ink => Theme.of(context).colorScheme.onSurface;
-  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
+  static const ink = Color(0xFF171B3D);
+  static const muted = Color(0xFF69708E);
   late Future<_Stage15InsightBundle> _future;
 
   @override
@@ -1310,7 +1310,7 @@ class AddRecordSheet extends StatelessWidget {
       heightFactor: .88,
       child: Container(
         padding: EdgeInsets.fromLTRB(18, 12, 18, MediaQuery.of(context).viewInsets.bottom + 16),
-        decoration: const BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
         child: Column(children: [
           Container(width: 44, height: 5, decoration: BoxDecoration(color: const Color(0xFFC7BFDC), borderRadius: BorderRadius.circular(5))),
           const SizedBox(height: 16),
@@ -1821,8 +1821,8 @@ class MedicationManagementPage extends StatefulWidget {
 }
 
 class _MedicationManagementPageState extends State<MedicationManagementPage> {
-  Color get ink => Theme.of(context).colorScheme.onSurface;
-  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
+  static const ink = Color(0xFF171B3D);
+  static const muted = Color(0xFF69708E);
   late Future<List<PatientRecord>> _future;
   @override
   void initState() { super.initState(); _future = _loadAndReconcileSchedules(); }
