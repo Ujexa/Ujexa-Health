@@ -41,6 +41,65 @@ jobs:
             flutter create --platforms=android --org com.ujexa.health --project-name ujexa_health .
           fi
 
+      - name: Enable Android core library desugaring
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          app = Path("android/app")
+          kotlin = app / "build.gradle.kts"
+          groovy = app / "build.gradle"
+
+          if kotlin.exists():
+              path = kotlin
+              source = path.read_text()
+              compile_block = "compileOptions {"
+              dependency_block = "dependencies {"
+              if "isCoreLibraryDesugaringEnabled" not in source:
+                  if compile_block not in source:
+                      raise SystemExit("Could not find compileOptions in build.gradle.kts")
+                  source = source.replace(
+                      compile_block,
+                      compile_block + "\\n        isCoreLibraryDesugaringEnabled = true",
+                      1,
+                  )
+              if "desugar_jdk_libs" not in source:
+                  if dependency_block not in source:
+                      raise SystemExit("Could not find dependencies in build.gradle.kts")
+                  source = source.replace(
+                      dependency_block,
+                      dependency_block + '\\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',
+                      1,
+                  )
+          elif groovy.exists():
+              path = groovy
+              source = path.read_text()
+              if "coreLibraryDesugaringEnabled" not in source:
+                  marker = "compileOptions {"
+                  if marker not in source:
+                      raise SystemExit("Could not find compileOptions in build.gradle")
+                  source = source.replace(
+                      marker,
+                      marker + "\\n        coreLibraryDesugaringEnabled true",
+                      1,
+                  )
+              if "desugar_jdk_libs" not in source:
+                  marker = "dependencies {"
+                  if marker not in source:
+                      raise SystemExit("Could not find dependencies in build.gradle")
+                  source = source.replace(
+                      marker,
+                      marker + "\\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'",
+                      1,
+                  )
+          else:
+              raise SystemExit("No Android app Gradle build file found")
+
+          path.write_text(source)
+          print(f"Enabled core library desugaring in {path}")
+          PY
+
       - name: Remove generated placeholder widget test
         shell: bash
         run: |
