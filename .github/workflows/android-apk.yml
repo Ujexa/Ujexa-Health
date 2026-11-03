@@ -48,8 +48,9 @@ jobs:
       - name: Prepare launcher artwork and app identity
         shell: bash
         run: |
-          python3 -m pip install --user Pillow
-          python3 - <<'PY'
+          python3 -m venv /tmp/ujexa-icon-env
+          /tmp/ujexa-icon-env/bin/pip install --disable-pip-version-check Pillow
+          /tmp/ujexa-icon-env/bin/python - <<'PY'
           from pathlib import Path
           from PIL import Image
 
