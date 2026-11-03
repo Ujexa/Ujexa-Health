@@ -1,6 +1,5 @@
 import base64
 import os
-from datetime import datetime, timezone
 from uuid import uuid4
 
 os.environ.setdefault("UJEXA_ENV", "development")
