@@ -120,6 +120,25 @@ jobs:
           print(source)
           PY
 
+      - name: Enable microphone permission for voice notes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          if not manifest.is_file():
+              raise SystemExit("Generated Android manifest is missing")
+          source = manifest.read_text()
+          permission = '<uses-permission android:name="android.permission.RECORD_AUDIO" />'
+          if permission not in source:
+              marker = '<application'
+              if marker not in source:
+                  raise SystemExit("Android manifest has no application element")
+              source = source.replace(marker, permission + "\\n    " + marker, 1)
+              manifest.write_text(source)
+          print("Microphone permission is configured for voice notes")
+          PY
+
       - name: Remove generated placeholder widget test
         shell: bash
         run: |
