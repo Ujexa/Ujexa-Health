@@ -11,7 +11,7 @@ from sqlalchemy import select
 
 from ..database import get_db
 from .auth import Identity
-from .dependencies import get_active_identity
+from .dependencies import get_active_identity, get_authenticated_identity
 from .models import DeviceChallenge, TrustedDevice, RevokedSession, SecurityEvent, VaultKeyEnvelope
 from .schemas import ChallengeResponse, DeviceEnrollRequest, DeviceResponse, RevokeResponse
 
@@ -32,7 +32,7 @@ def _event(db: Session, subject: str, event_type: str, target_id: str | None = N
     db.add(SecurityEvent(id=str(uuid4()), subject=subject, event_type=event_type, target_id=target_id, detail=detail[:255]))
 
 @router.post("/device-challenges", response_model=ChallengeResponse)
-def create_device_challenge(identity: Identity = Depends(get_active_identity), db: Session = Depends(get_db)):
+def create_device_challenge(identity: Identity = Depends(get_authenticated_identity), db: Session = Depends(get_db)):
     now = datetime.now(timezone.utc)
     challenge = DeviceChallenge(
         id=str(uuid4()), subject=identity.subject, nonce=secrets.token_urlsafe(32),
@@ -44,7 +44,7 @@ def create_device_challenge(identity: Identity = Depends(get_active_identity), d
     return ChallengeResponse(challenge_id=challenge.id, nonce=challenge.nonce, expires_in_seconds=int(CHALLENGE_TTL.total_seconds()))
 
 @router.post("/devices", response_model=DeviceResponse, status_code=status.HTTP_201_CREATED)
-def enroll_device(payload: DeviceEnrollRequest, identity: Identity = Depends(get_active_identity), db: Session = Depends(get_db)):
+def enroll_device(payload: DeviceEnrollRequest, identity: Identity = Depends(get_authenticated_identity), db: Session = Depends(get_db)):
     challenge = db.get(DeviceChallenge, payload.challenge_id)
     now = datetime.now(timezone.utc)
     if not challenge or challenge.subject != identity.subject or challenge.consumed_at is not None:

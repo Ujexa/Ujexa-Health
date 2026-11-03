@@ -7,8 +7,9 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import Enum
-from typing import Literal
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from typing import Annotated, Literal, Union
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator
+from pydantic import Field as PydanticField
 
 
 class ProvenanceSource(str, Enum):
@@ -338,9 +339,6 @@ class SharingConsentRecord(BaseModel):
 
 
 # Discriminated union used to publish a canonical JSON Schema for client validators.
-from typing import Annotated, Union
-from pydantic import TypeAdapter, Field as PydanticField
-
 HealthRecordResource = Annotated[
     Union[
         PatientProfile, ConditionRecord, AllergyRecord, ProcedureRecord,

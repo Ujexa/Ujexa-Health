@@ -2,6 +2,10 @@ name: Build Ujexa Health Android APK
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'apps/patient_mobile/**'
+      - '.github/workflows/android-apk.yml'
   push:
     branches: [main]
     paths:
@@ -40,6 +44,33 @@ jobs:
           if [ ! -d android ]; then
             flutter create --platforms=android --org com.ujexa.health --project-name ujexa_health .
           fi
+
+      - name: Prepare launcher artwork and app identity
+        shell: bash
+        run: |
+          python3 -m venv /tmp/ujexa-icon-env
+          /tmp/ujexa-icon-env/bin/pip install --disable-pip-version-check Pillow
+          /tmp/ujexa-icon-env/bin/python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+
+          source = Image.open("assets/ujexa_health_mark.png").convert("RGBA")
+          canvas = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
+          source.thumbnail((340, 340), Image.Resampling.LANCZOS)
+          canvas.alpha_composite(source, ((512 - source.width) // 2, (512 - source.height) // 2))
+          output = Path("assets/ujexa_health_launcher_foreground.png")
+          canvas.save(output, optimize=True)
+          print(f"Prepared padded adaptive launcher foreground: {output}")
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          xml = manifest.read_text()
+          import re
+          xml, count = re.subn(r'android:label="[^"]+"', 'android:label="Ujexa Health"', xml, count=1)
+          if count != 1:
+              raise SystemExit("Could not set Android application label")
+          manifest.write_text(xml)
+          print("Android launcher label set to Ujexa Health")
+          PY
 
       - name: Configure Android release build
         shell: bash
@@ -150,11 +181,14 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
+      - name: Generate branded Android launcher icons
+        run: dart run flutter_launcher_icons
+
       - name: Record resolved dependency graph
         run: flutter pub deps --style=compact
 
       - name: Run static analysis
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        run: flutter analyze --no-fatal-infos --fatal-warnings
 
       - name: Run tests
         run: flutter test

@@ -91,10 +91,10 @@ class _UjexaStartupGateState extends State<UjexaStartupGate> with SingleTickerPr
         SizedBox(width:150,height:150,child:Stack(alignment:Alignment.center,children:[
           Transform.scale(scale:.75+t*.45,child:Container(width:130,height:130,decoration:BoxDecoration(
             shape:BoxShape.circle,border:Border.all(color:const Color(0xFFB99BFF).withOpacity(1-t*.65),width:2)))),
-          Transform.rotate(angle:t*1.4,child:Container(width:104,height:104,decoration:BoxDecoration(
-            borderRadius:BorderRadius.circular(32),gradient:const LinearGradient(colors:[Color(0xFFB18AFF),Color(0xFF6C42C9)]),
+          Transform.rotate(angle:t*1.4,child:Container(width:104,height:104,padding:const EdgeInsets.all(10),decoration:BoxDecoration(
+            color:const Color(0xFFF4F0E6),borderRadius:BorderRadius.circular(32),
             boxShadow:[BoxShadow(color:const Color(0xFF9C6BFF).withOpacity(.25+t*.2),blurRadius:30)]),
-            child:const Icon(Icons.favorite_rounded,color:Colors.white,size:52))),
+            child:Image.asset('assets/ujexa_health_mark.png',fit:BoxFit.contain))),
           Positioned(top:8,right:14,child:Container(width:10,height:10,decoration:const BoxDecoration(color:Color(0xFF74E2C1),shape:BoxShape.circle)))
         ])),
         const SizedBox(height:26),Text('UJEXA HEALTH',style:TextStyle(color:Colors.white,fontSize:23,fontWeight:FontWeight.w900,letterSpacing:3)),
@@ -159,7 +159,15 @@ class _PatientShellState extends State<PatientShell> {
     return Scaffold(
       drawer: Drawer(child: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(padding: const EdgeInsets.fromLTRB(20,24,20,20), child: Row(children: [
-          Image.asset('assets/ujexa_health_mark.png', width: 48, height: 48), const SizedBox(width: 12),
+          Container(
+            width: 54, height: 54, padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4F0E6),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Image.asset('assets/ujexa_health_mark.png', fit: BoxFit.contain),
+          ),
+          const SizedBox(width: 12),
           const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Ujexa Health', style: TextStyle(fontSize: 19,fontWeight: FontWeight.w900)), Text('Your health, in your hands', style: TextStyle(fontSize: 11,color: Color(0xFF89839B)))])),
         ])),
         const Divider(height: 1),
@@ -179,8 +187,16 @@ class _PatientShellState extends State<PatientShell> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor, surfaceTintColor: Colors.transparent,
         leading: Builder(builder:(context)=>IconButton(tooltip:'Open navigation',icon:const Icon(Icons.menu_rounded),onPressed:()=>Scaffold.of(context).openDrawer())),
         title: Row(mainAxisSize:MainAxisSize.min,children:[
-          Container(width:32,height:32,decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerHighest,shape:BoxShape.circle),
-            child:ClipOval(child:Image.asset('assets/ujexa_health_mark.png',fit:BoxFit.cover))),
+          Container(
+            width: 40, height: 40, padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFFF4F0E6)
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset('assets/ujexa_health_mark.png', fit: BoxFit.contain),
+          ),
           const SizedBox(width:8),
           Text('Ujexa Health',style:TextStyle(fontWeight:FontWeight.w900,fontSize:16,letterSpacing:-.3)),
         ]),
@@ -622,7 +638,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     );
 
   @override Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).colorScheme.onSurface;
     return ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 110), children: [
       Container(

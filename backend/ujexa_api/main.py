@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from .database import Base, engine, get_db
+from .config import get_settings
 from .identity.auth import Identity
 from .identity.dependencies import get_active_identity
 from .identity.router import router as identity_router
@@ -10,14 +11,17 @@ from .health_records.router import router as health_records_router
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Convenience for local development. Production must use reviewed Alembic migrations.
-    Base.metadata.create_all(bind=engine)
+    # Validate production identity-provider configuration before accepting traffic.
+    settings = get_settings()
+    if settings.env != "production":
+        # Convenience for local development only. Production must use reviewed Alembic migrations.
+        Base.metadata.create_all(bind=engine)
     yield
 
 app = FastAPI(
     title="Ujexa Health API",
     version="0.2.0",
-    description="Identity and device-trust foundation. Health records and cryptographic key recovery are deliberately out of scope.",
+    description="Privacy-first patient health records API with identity, device trust, encrypted vault sync, and record provenance.",
     lifespan=lifespan,
 )
 

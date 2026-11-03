@@ -136,3 +136,8 @@ Adds a Document Review Workspace. Patients can edit and confirm supported labora
 
 ## Combined Stages 22–29 milestone
 Adds local record-integrity findings and version history, appointment and preventive-care records, lifestyle capture, a patient-facing emergency summary, scoped local sharing-consent records with revocation, and source-document provenance fields. The existing longitudinal intelligence remains in place. No clinician portal or remote sharing transport is claimed. Production security audit, emergency remote access, automated preventive reminders, Flutter builds and device validation remain outstanding. See `docs/22-29-combined-milestone.md`.
+
+
+## Current build verification — 2026-11-03
+
+The latest remediation and CI findings are documented in [the repository build audit](docs/AUDIT_REMEDIATION_2026-11-03.md). GitHub Actions now runs backend lint/tests/dependency auditing and Flutter analysis/tests before the Android release build. The Android platform directory is generated in CI if absent from source control. Do not use real patient data: production vault key lifecycle, recovery, sync and independent security/clinical review remain release gates.
