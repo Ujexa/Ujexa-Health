@@ -640,7 +640,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     );
 
   @override Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).colorScheme.onSurface;
     return ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 110), children: [
       Container(
