@@ -7,7 +7,8 @@ class NotificationCenterPage extends StatefulWidget {
   @override State<NotificationCenterPage> createState()=>_NotificationCenterPageState();
 }
 class _NotificationCenterPageState extends State<NotificationCenterPage> {
-  static const ink=Color(0xFF171B3D), purple=Color(0xFF7938DB);
+  static const purple=Color(0xFF7938DB);
+  Color get ink => Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF171B3D);
   final center=HealthNotificationCenter.instance;
   @override void initState(){super.initState();center.initialize().then((_) {if(mounted)setState((){});});}
   Color _tone(HealthNoticeKind k)=>switch(k){HealthNoticeKind.timed=>const Color(0xFF3977D5),HealthNoticeKind.regular=>const Color(0xFF27866D),HealthNoticeKind.warning=>const Color(0xFFD45A47)};
@@ -19,9 +20,9 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
     final ok=await showModalBottomSheet<bool>(context:context,isScrollControlled:true,
       backgroundColor:Colors.transparent,builder:(ctx)=>StatefulBuilder(builder:(ctx,setSheet)=>Container(
         padding:EdgeInsets.fromLTRB(20,20,20,MediaQuery.of(ctx).viewInsets.bottom+24),
-        decoration:const BoxDecoration(color:Colors.white,borderRadius:BorderRadius.vertical(top:Radius.circular(28))),
+        decoration:BoxDecoration(color:Theme.of(ctx).colorScheme.surfaceContainerLow,borderRadius:const BorderRadius.vertical(top:Radius.circular(28))),
         child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
-          const Text('Create a useful reminder',style:TextStyle(fontSize:21,fontWeight:FontWeight.w800,color:ink)),
+          Text('Create a useful reminder',style:TextStyle(fontSize:21,fontWeight:FontWeight.w800,color:ink)),
           const SizedBox(height:14),
           TextField(controller:title,decoration:const InputDecoration(labelText:'What needs attention?',border:OutlineInputBorder())),
           const SizedBox(height:10),
@@ -54,7 +55,7 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
   }
   @override Widget build(BuildContext context)=>Scaffold(
     backgroundColor:Theme.of(context).scaffoldBackgroundColor,
-    appBar:AppBar(title:const Text('Notification centre',style:TextStyle(fontWeight:FontWeight.w800,color:ink)),
+    appBar:AppBar(title:Text('Notification centre',style:TextStyle(fontWeight:FontWeight.w800,color:ink)),
       actions:[TextButton(onPressed:()async{await center.markAllRead();setState((){});},child:const Text('Mark all read'))]),
     floatingActionButton:FloatingActionButton.extended(onPressed:_create,backgroundColor:purple,
       foregroundColor:Colors.white,icon:const Icon(Icons.add_alarm),label:const Text('New reminder')),
@@ -81,7 +82,7 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
               Container(width:42,height:42,decoration:BoxDecoration(color:_tone(n.kind).withOpacity(.11),borderRadius:BorderRadius.circular(14)),
                 child:Icon(_icon(n.kind),color:_tone(n.kind))),
               const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-                Row(children:[Expanded(child:Text(n.title,style:const TextStyle(fontWeight:FontWeight.w800,color:ink))),
+                Row(children:[Expanded(child:Text(n.title,style:TextStyle(fontWeight:FontWeight.w800,color:ink))),
                   if(!n.read)Container(width:7,height:7,decoration:BoxDecoration(color:_tone(n.kind),shape:BoxShape.circle))]),
                 const SizedBox(height:4),Text(n.body,style:const TextStyle(height:1.3)),
                 const SizedBox(height:6),Text('${n.kind.name.toUpperCase()}  ·  ${n.createdAt.toLocal().toString().substring(0,16)}',
@@ -89,7 +90,7 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
               ]))
             ])) ))),
         const SizedBox(height:8),
-        const Text('Sound and delivery',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:ink)),
+        Text('Sound and delivery',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:ink)),
         const SizedBox(height:5),
         const Text('Scheduled alerts use the device notification sound and vibration. Delivery depends on OS permission, battery policy and device settings.',
           style:TextStyle(height:1.35,fontSize:12))
