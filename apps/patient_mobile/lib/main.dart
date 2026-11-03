@@ -46,6 +46,11 @@ class UjexaHealthApp extends StatelessWidget {
     return ThemeData(
       useMaterial3: true, brightness: brightness, colorScheme: scheme,
       scaffoldBackgroundColor: dark ? const Color(0xFF10131B) : const Color(0xFFF7F5FB), fontFamily: 'Roboto',
+      textTheme: (dark ? Typography.whiteMountainView : Typography.blackMountainView).apply(
+        fontFamily: 'Roboto',
+        bodyColor: dark ? const Color(0xFFF5F1FF) : const Color(0xFF171B3D),
+        displayColor: dark ? Colors.white : const Color(0xFF171B3D),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true, fillColor: fill, contentPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 17),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
@@ -338,9 +343,9 @@ class _RecordsPageState extends State<RecordsPage> {
             controller: controller,
             padding: const EdgeInsets.fromLTRB(22, 4, 22, 30),
             children: [
-              Text(_title(record), style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w800, color: ink)),
+              Text(_title(record), style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w800)),
               const SizedBox(height: 5),
-              Text('${_dateLabel(_eventDate(record))} · Version ${record.version}', style: const TextStyle(color: muted)),
+              Text('${_dateLabel(_eventDate(record))} · Version ${record.version}', style: const TextStyle()),
               const SizedBox(height: 12),
               Text('PATIENT-ENTERED · UNVERIFIED', style: TextStyle(fontSize: 10, letterSpacing: .7, fontWeight: FontWeight.w800, color: Color(0xFF8A6C24))),
               const SizedBox(height: 16),
@@ -349,14 +354,14 @@ class _RecordsPageState extends State<RecordsPage> {
                 .map((e) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(e.key.replaceAll('_', ' ').toUpperCase(), style: const TextStyle(fontSize: 10, letterSpacing: .5, color: muted, fontWeight: FontWeight.w700)),
+                    Text(e.key.replaceAll('_', ' ').toUpperCase(), style: const TextStyle(fontSize: 10, letterSpacing: .5, fontWeight: FontWeight.w700)),
                     const SizedBox(height: 3),
-                    Text(e.value.toString(), style: const TextStyle(fontSize: 15, color: ink)),
+                    Text(e.value.toString(), style: const TextStyle(fontSize: 15)),
                   ]),
                 )),
               if (related.isNotEmpty) ...[
                 const Divider(),
-                Text('Related records', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: ink)),
+                Text('Related records', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 8),
                 ...related.map((r) => ListTile(
                   contentPadding: EdgeInsets.zero,
@@ -367,7 +372,7 @@ class _RecordsPageState extends State<RecordsPage> {
                 )),
               ],
               const SizedBox(height: 12),
-              Text('This information has not been independently verified by a clinician.', style: TextStyle(fontSize: 12, color: muted)),
+              Text('This information has not been independently verified by a clinician.', style: TextStyle(fontSize: 12)),
             ],
           ),
         ),
@@ -392,9 +397,9 @@ class _RecordsPageState extends State<RecordsPage> {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(20, 22, 20, 110),
           children: [
-            Text('Your health timeline', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: ink)),
+            Text('Your health timeline', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            Text('A chronological view of your health records, decrypted locally on this device.', style: TextStyle(color: muted)),
+            Text('A chronological view of your health records, decrypted locally on this device.', style: TextStyle()),
             const SizedBox(height: 18),
             FilledButton.icon(onPressed: widget.onAdd, icon: const Icon(Icons.add), label: Text('Add to health record')),
             const SizedBox(height: 14),
@@ -455,10 +460,10 @@ class _RecordsPageState extends State<RecordsPage> {
                   const Icon(Icons.filter_list_off, size: 38, color: Color(0xFF7938DB)),
                   const SizedBox(height: 10),
                   Text(all.isEmpty ? 'Your health record starts here' : 'No matching records',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: ink)),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
                   const SizedBox(height: 6),
                   Text(all.isEmpty ? 'Add a checkup, vital sign, medication or medical document to begin.' : 'Try another category, search term or date range.',
-                    textAlign: TextAlign.center, style: const TextStyle(color: muted, height: 1.4)),
+                    textAlign: TextAlign.center, style: const TextStyle( height: 1.4)),
                 ]),
               )
             else ...grouped.entries.map((group) => Column(
@@ -467,11 +472,11 @@ class _RecordsPageState extends State<RecordsPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 15, bottom: 9),
                   child: Row(children: [
-                    Text(group.key, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: ink)),
+                    Text(group.key, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800)),
                     const SizedBox(width: 8),
                     Expanded(child: Container(height: 1, color: const Color(0xFFE7E7F0))),
                     const SizedBox(width: 8),
-                    Text('${group.value.length}', style: const TextStyle(fontSize: 11, color: muted)),
+                    Text('${group.value.length}', style: const TextStyle(fontSize: 11)),
                   ]),
                 ),
                 ...group.value.map((record) => Container(
@@ -482,11 +487,11 @@ class _RecordsPageState extends State<RecordsPage> {
                     Row(children: [
                       Icon(_iconFor(record.resourceType), size: 19, color: const Color(0xFF7938DB)),
                       const SizedBox(width: 8),
-                      Expanded(child: Text(_title(record), style: const TextStyle(fontWeight: FontWeight.w800, color: ink))),
-                      Text(_eventDate(record).toLocal().toString().substring(11, 16), style: const TextStyle(fontSize: 12, color: muted)),
+                      Expanded(child: Text(_title(record), style: const TextStyle(fontWeight: FontWeight.w800))),
+                      Text(_eventDate(record).toLocal().toString().substring(11, 16), style: const TextStyle(fontSize: 12)),
                     ]),
                     const SizedBox(height: 8),
-                    Text(_summary(record), maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(color: ink, height: 1.35)),
+                    Text(_summary(record), maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle( height: 1.35)),
                     const SizedBox(height: 7),
                     Row(children: [
                       const Expanded(child: Text('PATIENT-ENTERED · UNVERIFIED', style: TextStyle(fontSize: 9, letterSpacing: .5, fontWeight: FontWeight.w800, color: Color(0xFF8A6C24)))),
@@ -532,7 +537,7 @@ class _RecordsPageState extends State<RecordsPage> {
             )),
             const SizedBox(height: 12),
             Text('Your profile is managed separately. Timeline entries are patient-entered unless an authorized verification process is introduced.',
-              style: TextStyle(fontSize: 12, color: muted, height: 1.4)),
+              style: TextStyle(fontSize: 12, height: 1.4)),
           ],
         ),
       );
@@ -610,7 +615,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
           borderRadius: BorderRadius.circular(23), onTap: onTap,
           child: SizedBox(height: 116, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(icon, size: 30, color: accent), const SizedBox(height: 10),
-            Text(label, style: const TextStyle(color: ink, fontSize: 13, fontWeight: FontWeight.w800)),
+            Text(label, style: const TextStyle( fontSize: 13, fontWeight: FontWeight.w800)),
           ])),
         ),
       ),
@@ -712,16 +717,16 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
   Widget _sectionTitle(String title, String subtitle) => Padding(
     padding: const EdgeInsets.only(top: 22, bottom: 10),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: ink)),
+      Text(title, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
       const SizedBox(height: 3),
-      Text(subtitle, style: const TextStyle(fontSize: 12, color: muted)),
+      Text(subtitle, style: const TextStyle(fontSize: 12)),
     ]),
   );
 
   Widget _adherenceMetric(String label, int count, Color color) => Expanded(
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text('$count', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color)),
-      Text(label, style: const TextStyle(fontSize: 10, color: muted)),
+      Text(label, style: const TextStyle(fontSize: 10)),
     ]),
   );
 
@@ -751,9 +756,9 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             const Icon(Icons.lock_outline, size: 40, color: Color(0xFF7938DB)),
             const SizedBox(height: 10),
-            Text('Insights are unavailable', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: ink)),
+            Text('Insights are unavailable', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            Text('The encrypted health record could not be read on this device.', textAlign: TextAlign.center, style: TextStyle(color: muted)),
+            Text('The encrypted health record could not be read on this device.', textAlign: TextAlign.center, style: TextStyle()),
             TextButton(onPressed: _refresh, child: Text('Try again')),
           ]),
         ));
@@ -768,14 +773,14 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(20, 22, 20, 110),
           children: [
-            Text('Health insights', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: ink)),
+            Text('Health insights', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            Text('Descriptive summaries from the information you have recorded.', style: TextStyle(color: muted)),
+            Text('Descriptive summaries from the information you have recorded.', style: TextStyle()),
             const SizedBox(height: 16),
             _panel(child: Row(children: [
               const Icon(Icons.shield_outlined, color: Color(0xFF7938DB), size: 28),
               const SizedBox(width: 12),
-              const Expanded(child: Text('Insights are calculated on this device from your decrypted records. They are not diagnoses or treatment advice.', style: TextStyle(color: muted, height: 1.4, fontSize: 12))),
+              const Expanded(child: Text('Insights are calculated on this device from your decrypted records. They are not diagnoses or treatment advice.', style: TextStyle( height: 1.4, fontSize: 12))),
             ])),
             _sectionTitle('Cross-domain intelligence', 'Explore dated overlaps across symptoms, measurements, medication events, visits and documents.'),
             const CrossDomainHealthPanel(),
@@ -788,30 +793,30 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
                   child:const Icon(Icons.hub_outlined,color:Color(0xFF7938DB),size:25)),
                 const SizedBox(width:11),
                 const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-                  Text('Longitudinal neural model',style:TextStyle(fontWeight:FontWeight.w800,color:ink,fontSize:16)),
-                  Text('On-device · patient-specific · self-supervised',style:TextStyle(fontSize:11,color:muted))
+                  Text('Longitudinal neural model',style:TextStyle(fontWeight:FontWeight.w800,fontSize:16)),
+                  Text('On-device · patient-specific · self-supervised',style:TextStyle(fontSize:11))
                 ]))
               ]),
               const SizedBox(height:12),
               if(!network.ready) ...[
-                Text('${network.historyDays}/${LongitudinalHealthNetwork.minHistoryDays} distinct measurement days',style:const TextStyle(fontWeight:FontWeight.w800,color:ink)),
+                Text('${network.historyDays}/${LongitudinalHealthNetwork.minHistoryDays} distinct measurement days',style:const TextStyle(fontWeight:FontWeight.w800)),
                 const SizedBox(height:7),
                 ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(network.historyDays/LongitudinalHealthNetwork.minHistoryDays).clamp(0.0,1.0),minHeight:7,backgroundColor:const Color(0xFFECEAF3),color:const Color(0xFF7938DB))),
-                const SizedBox(height:7),Text(network.limitations,style:const TextStyle(fontSize:12,color:muted))
+                const SizedBox(height:7),Text(network.limitations,style:const TextStyle(fontSize:12))
               ] else ...[
                 Row(children:[
                   Icon(network.personalPatternChanged?Icons.insights:Icons.check_circle_outline,color:network.personalPatternChanged?const Color(0xFFB36A17):const Color(0xFF27866D)),
-                  const SizedBox(width:7),Expanded(child:Text(network.personalPatternChanged?'Personal pattern changed':'Personal pattern broadly consistent',style:const TextStyle(fontWeight:FontWeight.w800,color:ink)))
+                  const SizedBox(width:7),Expanded(child:Text(network.personalPatternChanged?'Personal pattern changed':'Personal pattern broadly consistent',style:const TextStyle(fontWeight:FontWeight.w800)))
                 ]),
-                const SizedBox(height:7),Text(network.summary,style:const TextStyle(fontSize:12,color:muted,height:1.4)),
-                const SizedBox(height:6),Text('${network.historyDays} history days · ${network.trainingDays} baseline days · ${network.evaluatedDays} recent days',style:const TextStyle(fontSize:10,color:muted))
+                const SizedBox(height:7),Text(network.summary,style:const TextStyle(fontSize:12,height:1.4)),
+                const SizedBox(height:6),Text('${network.historyDays} history days · ${network.trainingDays} baseline days · ${network.evaluatedDays} recent days',style:const TextStyle(fontSize:10))
               ],
-              const SizedBox(height:8),Text(network.limitations,style:const TextStyle(fontSize:10,color:muted))
+              const SizedBox(height:8),Text(network.limitations,style:const TextStyle(fontSize:10))
             ])),
             _sectionTitle('Medication adherence', 'Dose events compared with the explicit schedules you recorded.'),
             _panel(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
               Row(children:[
-                Expanded(child:Text(adherence.adherencePercent==null?'No completed dose history': '${adherence.adherencePercent!.toStringAsFixed(0)}% recorded as taken',style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800,color:ink))),
+                Expanded(child:Text(adherence.adherencePercent==null?'No completed dose history': '${adherence.adherencePercent!.toStringAsFixed(0)}% recorded as taken',style:const TextStyle(fontSize:18,fontWeight:FontWeight.w800))),
                 Text('${adherence.taken} taken',style:const TextStyle(fontSize:11,fontWeight:FontWeight.w700,color:Color(0xFF27866D)))
               ]),
               const SizedBox(height:10),
@@ -823,42 +828,42 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
               ]),
               const SizedBox(height:8),
               const Divider(height:20),
-              Text('Recent and upcoming doses',style:TextStyle(fontWeight:FontWeight.w800,color:ink)),
+              Text('Recent and upcoming doses',style:TextStyle(fontWeight:FontWeight.w800)),
               const SizedBox(height:7),
               ...adherence.doses.take(8).map((dose){
                 final color=switch(dose.state){DoseState.taken=>const Color(0xFF27866D),DoseState.missed=>const Color(0xFFD45A47),DoseState.skipped=>const Color(0xFFB36A17),DoseState.overdue=>const Color(0xFFD45A47),DoseState.upcoming=>const Color(0xFF3977D5)};
                 return Padding(padding:const EdgeInsets.only(bottom:7),child:Row(children:[
                   Icon(switch(dose.state){DoseState.taken=>Icons.check_circle,DoseState.missed=>Icons.cancel,DoseState.skipped=>Icons.remove_circle_outline,DoseState.overdue=>Icons.warning_amber_rounded,DoseState.upcoming=>Icons.alarm},size:17,color:color),
-                  const SizedBox(width:8),Expanded(child:Text('${dose.medicationName} · ${dose.dose}',style:const TextStyle(fontSize:11,color:ink))),
-                  Text('${dose.dueAt.month}/${dose.dueAt.day} ${dose.dueAt.hour.toString().padLeft(2,'0')}:${dose.dueAt.minute.toString().padLeft(2,'0')}',style:const TextStyle(fontSize:10,color:muted)),
+                  const SizedBox(width:8),Expanded(child:Text('${dose.medicationName} · ${dose.dose}',style:const TextStyle(fontSize:11))),
+                  Text('${dose.dueAt.month}/${dose.dueAt.day} ${dose.dueAt.hour.toString().padLeft(2,'0')}:${dose.dueAt.minute.toString().padLeft(2,'0')}',style:const TextStyle(fontSize:10)),
                   const SizedBox(width:5),Text(dose.state.name,style:TextStyle(fontSize:10,fontWeight:FontWeight.w800,color:color))
                 ]));
               }),
-              Text('Overdue doses are not automatically logged as missed. Confirm each event in Medication Management. This percentage describes recorded events only.',style:TextStyle(fontSize:11,color:muted,height:1.35))
+              Text('Overdue doses are not automatically logged as missed. Confirm each event in Medication Management. This percentage describes recorded events only.',style:TextStyle(fontSize:11,height:1.35))
             ])),
             _sectionTitle('Vital-sign history', 'Recorded measurements over time; units are kept separate.'),
             if (data.vitalTrends.isEmpty)
-              _panel(child: Text('No usable numeric observations yet. Add measurements on the Records tab to see history here.', style: TextStyle(color: muted, height: 1.4)))
+              _panel(child: Text('No usable numeric observations yet. Add measurements on the Records tab to see history here.', style: TextStyle( height: 1.4)))
             else ...data.vitalTrends.map((trend) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: _panel(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
-                  Expanded(child: Text(trend.label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: ink))),
+                  Expanded(child: Text(trend.label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
                   Text('${trend.latestValue.toStringAsFixed(2)} ${trend.unit}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF7938DB))),
                 ]),
                 const SizedBox(height: 4),
                 Text('${trend.points.length} measurement${trend.points.length == 1 ? '' : 's'} · ${_date(trend.points.first.date.toIso8601String())} to ${_date(trend.points.last.date.toIso8601String())}',
-                  style: const TextStyle(fontSize: 11, color: muted)),
+                  style: const TextStyle(fontSize: 11)),
                 const SizedBox(height: 12),
                 if (trend.points.length > 1) SizedBox(height: 68, width: double.infinity, child: CustomPaint(painter: _TrendPainter(trend.points.map((p) => p.value).toList()))),
                 const SizedBox(height: 7),
-                Text(HealthInsightsEngine.describeChange(trend), style: const TextStyle(fontSize: 12, color: muted, height: 1.4)),
+                Text(HealthInsightsEngine.describeChange(trend), style: const TextStyle(fontSize: 12, height: 1.4)),
               ])),
             )),
             _sectionTitle('Medication overview', 'Based on the status recorded in each medication statement.'),
             _panel(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('${data.activeMedications.length} active medication${data.activeMedications.length == 1 ? '' : 's'}', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: ink)),
-              Text('${data.otherMedicationCount} with another or unspecified status', style: const TextStyle(fontSize: 12, color: muted)),
+              Text('${data.activeMedications.length} active medication${data.activeMedications.length == 1 ? '' : 's'}', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+              Text('${data.otherMedicationCount} with another or unspecified status', style: const TextStyle(fontSize: 12)),
               if (data.activeMedications.isNotEmpty) ...[
                 const Divider(height: 22),
                 ...data.activeMedications.map((m) => Padding(
@@ -867,8 +872,8 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
                     const Icon(Icons.medication_outlined, size: 18, color: Color(0xFF7938DB)),
                     const SizedBox(width: 8),
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text((m['medication_name'] ?? 'Medication').toString(), style: const TextStyle(fontWeight: FontWeight.w700, color: ink)),
-                      Text([m['dose'], m['frequency']].where((v) => v != null && v.toString().trim().isNotEmpty).join(' · '), style: const TextStyle(fontSize: 12, color: muted)),
+                      Text((m['medication_name'] ?? 'Medication').toString(), style: const TextStyle(fontWeight: FontWeight.w700)),
+                      Text([m['dose'], m['frequency']].where((v) => v != null && v.toString().trim().isNotEmpty).join(' · '), style: const TextStyle(fontSize: 12)),
                     ])),
                   ]),
                 )),
@@ -876,49 +881,49 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
             ])),
             _sectionTitle('Recorded allergies and conditions', 'Only entries currently marked active are included.'),
             _panel(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Active allergies · ${data.activeAllergies.length}', style: const TextStyle(fontWeight: FontWeight.w800, color: ink)),
-              if (data.activeAllergies.isNotEmpty) ...data.activeAllergies.map((r) => Padding(padding: const EdgeInsets.only(top: 5), child: Text('• ${r['substance'] ?? 'Unspecified'}${r['severity'] == null ? '' : ' · ${r['severity']}'}', style: const TextStyle(color: muted)))),
+              Text('Active allergies · ${data.activeAllergies.length}', style: const TextStyle(fontWeight: FontWeight.w800)),
+              if (data.activeAllergies.isNotEmpty) ...data.activeAllergies.map((r) => Padding(padding: const EdgeInsets.only(top: 5), child: Text('• ${r['substance'] ?? 'Unspecified'}${r['severity'] == null ? '' : ' · ${r['severity']}'}', style: const TextStyle()))),
               const Divider(height: 22),
-              Text('Active conditions · ${data.activeConditions.length}', style: const TextStyle(fontWeight: FontWeight.w800, color: ink)),
-              if (data.activeConditions.isNotEmpty) ...data.activeConditions.map((r) => Padding(padding: const EdgeInsets.only(top: 5), child: Text('• ${r['display'] ?? 'Unspecified'}', style: const TextStyle(color: muted)))),
+              Text('Active conditions · ${data.activeConditions.length}', style: const TextStyle(fontWeight: FontWeight.w800)),
+              if (data.activeConditions.isNotEmpty) ...data.activeConditions.map((r) => Padding(padding: const EdgeInsets.only(top: 5), child: Text('• ${r['display'] ?? 'Unspecified'}', style: const TextStyle()))),
               if (data.activeAllergies.isEmpty && data.activeConditions.isEmpty)
-                const Padding(padding: EdgeInsets.only(top: 6), child: Text('No active allergies or conditions are recorded. This does not confirm their absence.', style: TextStyle(fontSize: 12, color: muted))),
+                const Padding(padding: EdgeInsets.only(top: 6), child: Text('No active allergies or conditions are recorded. This does not confirm their absence.', style: TextStyle(fontSize: 12))),
             ])),
             _sectionTitle('Checkup history and follow-up notes', 'Recent encounters and instructions already saved in your records.'),
             _panel(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (data.recentVisits.isEmpty) Text('No checkups recorded yet.', style: TextStyle(color: muted))
+              if (data.recentVisits.isEmpty) Text('No checkups recorded yet.', style: TextStyle())
               else ...data.recentVisits.map((r) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Icon(Icons.event_note_outlined, size: 18, color: Color(0xFF7938DB)),
                   const SizedBox(width: 8),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text((r['reason'] ?? r['encounter_type'] ?? 'Visit').toString(), style: const TextStyle(fontWeight: FontWeight.w700, color: ink)),
-                    Text('${_date(r['started_at'])} · ${(r['organization'] ?? 'Facility not recorded')}', style: const TextStyle(fontSize: 11, color: muted)),
+                    Text((r['reason'] ?? r['encounter_type'] ?? 'Visit').toString(), style: const TextStyle(fontWeight: FontWeight.w700)),
+                    Text('${_date(r['started_at'])} · ${(r['organization'] ?? 'Facility not recorded')}', style: const TextStyle(fontSize: 11)),
                   ])),
                 ]),
               )),
               if (data.followUpItems.isNotEmpty) ...[
                 const Divider(height: 18),
-                Text('Recorded follow-up instructions', style: TextStyle(fontWeight: FontWeight.w800, color: ink)),
-                ...data.followUpItems.map((v) => Padding(padding: const EdgeInsets.only(top: 6), child: Text('• $v', style: const TextStyle(color: muted, height: 1.35)))),
+                Text('Recorded follow-up instructions', style: TextStyle(fontWeight: FontWeight.w800)),
+                ...data.followUpItems.map((v) => Padding(padding: const EdgeInsets.only(top: 6), child: Text('• $v', style: const TextStyle( height: 1.35)))),
               ] else
-                Text('No follow-up instructions have been recorded. This is not a reminder system.', style: TextStyle(fontSize: 12, color: muted)),
+                Text('No follow-up instructions have been recorded. This is not a reminder system.', style: TextStyle(fontSize: 12)),
             ])),
             _sectionTitle('Data completeness', 'Gaps that limit what can be summarized.'),
             _panel(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('${data.totalRecords} clinical record${data.totalRecords == 1 ? '' : 's'} analyzed', style: const TextStyle(fontWeight: FontWeight.w800, color: ink)),
+              Text('${data.totalRecords} clinical record${data.totalRecords == 1 ? '' : 's'} analyzed', style: const TextStyle(fontWeight: FontWeight.w800)),
               const SizedBox(height: 7),
               ...data.dataQualityNotes.map((note) => Padding(padding: const EdgeInsets.only(top: 6), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Icon(Icons.info_outline, size: 16, color: Color(0xFF9A741B)),
                 const SizedBox(width: 7),
-                Expanded(child: Text(note, style: const TextStyle(fontSize: 12, color: muted, height: 1.35))),
+                Expanded(child: Text(note, style: const TextStyle(fontSize: 12, height: 1.35))),
               ]))),
-              if (data.dataQualityNotes.isEmpty) Text('No obvious missing fields were detected in the records used for these summaries.', style: TextStyle(fontSize: 12, color: muted)),
+              if (data.dataQualityNotes.isEmpty) Text('No obvious missing fields were detected in the records used for these summaries.', style: TextStyle(fontSize: 12)),
             ])),
             const SizedBox(height: 18),
             Text('These summaries reflect only what is stored in this personal record. Missing entries, outdated information or incorrect measurements can change the picture. Do not use this page to make medical decisions or change medication without a qualified professional.',
-              style: TextStyle(fontSize: 11, color: muted, height: 1.45)),
+              style: TextStyle(fontSize: 11, height: 1.45)),
           ],
         ),
       );
@@ -969,13 +974,13 @@ class OverviewCard extends StatelessWidget {
         const SizedBox.expand(child: CircularProgressIndicator(value: .85, strokeWidth: 11, backgroundColor: Color(0xFFD8C4F2), color: Color(0xFF9638E8))),
         Column(mainAxisAlignment: MainAxisAlignment.center, children: const [
           Icon(Icons.favorite, color: Color(0xFFC44BC5), size: 24),
-          Text('85%', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+          Text('85%', style: TextStyle(fontSize: 34, fontWeight: FontWeight.w800)),
           Text('Daily progress', style: TextStyle(fontSize: 11)),
         ]),
       ])),
       const SizedBox(width: 16),
       const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('You’re on track!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+        Text('You’re on track!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
         SizedBox(height: 10),
         Text('✓  Medication taken', style: TextStyle(height: 1.8)),
         Text('✓  Vitals logged', style: TextStyle(height: 1.8)),
@@ -995,8 +1000,8 @@ class MetricCard extends StatelessWidget {
     child: Column(children: [
       Icon(icon, color: const Color(0xFF7938DB), size: 25),
       const SizedBox(height: 6),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
-      Text(label, style: const TextStyle(fontSize: 11, color: Color(0xFF69708E))),
+      Text(value, style: const TextStyle(fontWeight: FontWeight.w800)),
+      Text(label, style: const TextStyle(fontSize: 11)),
     ]),
   );
 }
@@ -1011,8 +1016,8 @@ class FeatureCard extends StatelessWidget {
       CircleAvatar(backgroundColor: tint, foregroundColor: const Color(0xFF7938DB), child: Icon(icon)),
       const SizedBox(width: 12),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
-        const SizedBox(height: 4), Text(detail), Text(foot, style: const TextStyle(fontSize: 11, color: Color(0xFF69708E))),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+        const SizedBox(height: 4), Text(detail), Text(foot, style: const TextStyle(fontSize: 11)),
       ])),
       const Icon(Icons.chevron_right),
     ]),
@@ -1110,16 +1115,16 @@ class _DocumentPromotionWorkspaceState extends State<DocumentPromotionWorkspace>
       }}
       if(pending.isEmpty)return const Center(child:Padding(padding:EdgeInsets.all(24),child:Text('No unreviewed document annotations. Extract and accept candidates from a medical document first.',textAlign:TextAlign.center)));
       return ListView(padding:const EdgeInsets.all(18),children:[
-        Text('Confirm extracted information',style:TextStyle(fontSize:24,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+        Text('Confirm extracted information',style:TextStyle(fontSize:24,fontWeight:FontWeight.w800)),
         const SizedBox(height:6),
-        Text('Each item is reviewed independently. Confirmed values become patient-confirmed records, not clinician-verified records.',style:TextStyle(color:Color(0xFF69708E))),
+        Text('Each item is reviewed independently. Confirmed values become patient-confirmed records, not clinician-verified records.',style:TextStyle()),
         const SizedBox(height:16),
         ...pending.map((item){
           final doc=item.doc;final a=item.annotation;final fields=Map<String,String>.from(a['fields'] as Map);final kind=a['kind'];
           final evidence=a['evidence'];final page=a['page'];
           return Container(margin:const EdgeInsets.only(bottom:14),padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(17),border:Border.all(color:Theme.of(context).colorScheme.outlineVariant)),
             child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-              Text(doc.payload['title']??'Medical document',style:const TextStyle(fontWeight:FontWeight.w800,fontSize:15,color:Color(0xFF171B3D))),
+              Text(doc.payload['title']??'Medical document',style:const TextStyle(fontWeight:FontWeight.w800,fontSize:15)),
               Text('Page $page · ${kind.toString().replaceAll('_',' ')}',style:const TextStyle(fontSize:11,color:Color(0xFF7938DB))),
               const SizedBox(height:8),
               Container(width:double.infinity,padding:const EdgeInsets.all(10),decoration:BoxDecoration(color:const Color(0xFFF5F2FA),borderRadius:BorderRadius.circular(10)),child:Text('Source evidence: $evidence',style:const TextStyle(fontSize:12))),
@@ -1176,7 +1181,7 @@ class _StageCaptureFormState extends State<StageCaptureForm>{
     finally{if(mounted)setState(()=>saving=false);}
   }
   @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(widget.kind)),body:ListView(padding:const EdgeInsets.all(20),children:[
-    Text(widget.kind,style:const TextStyle(fontSize:25,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+    Text(widget.kind,style:const TextStyle(fontSize:25,fontWeight:FontWeight.w800)),
     const SizedBox(height:12),
     if(widget.kind=='Appointment')...[
       TextField(controller:a,decoration:const InputDecoration(labelText:'Appointment title',border:OutlineInputBorder())),
@@ -1196,7 +1201,7 @@ class _StageCaptureFormState extends State<StageCaptureForm>{
       const SizedBox(height:10),TextField(controller:b,decoration:const InputDecoration(labelText:'Purpose of sharing',border:OutlineInputBorder())),
       Text('Select categories to authorize',style:TextStyle(fontWeight:FontWeight.w700)),
       ...['profile','conditions','allergies','medications','observations','encounters','documents','symptoms'].map((x)=>CheckboxListTile(value:selected.contains(x),title:Text(x),dense:true,onChanged:(v)=>setState(()=>v==true?selected.add(x):selected.remove(x)))),
-      Text('This records local consent intent only. It does not transmit records or create a secure clinician portal link.',style:TextStyle(fontSize:12,color:Color(0xFF69708E))),
+      Text('This records local consent intent only. It does not transmit records or create a secure clinician portal link.',style:TextStyle(fontSize:12)),
     ],
     const SizedBox(height:12),
     OutlinedButton.icon(onPressed:()async{final d=await showDatePicker(context:context,initialDate:date,firstDate:DateTime(2000),lastDate:DateTime(2100));if(d!=null)setState(()=>date=d);},icon:const Icon(Icons.calendar_today),label:Text('Date: ${date.toLocal().toString().split(' ').first}')),
@@ -1242,7 +1247,7 @@ class _RecordHistoryPageState extends State<RecordHistoryPage>{
   final records=s.data!;
   return ListView(padding:const EdgeInsets.all(18),children:[
    Text('Current record versions',style:TextStyle(fontSize:23,fontWeight:FontWeight.w800)),
-   Text('Records are stored as immutable versions. Earlier versions can be inspected where the encrypted store retains them.',style:TextStyle(color:Color(0xFF69708E))),
+   Text('Records are stored as immutable versions. Earlier versions can be inspected where the encrypted store retains them.',style:TextStyle()),
    ...records.map((r)=>ListTile(title:Text('${r.resourceType} · v${r.version}'),subtitle:Text('${r.id}\\n${r.recordedAt.toLocal()}'),isThreeLine:true,
     trailing:IconButton(icon:const Icon(Icons.history),onPressed:()async{
       final previous=<PatientRecord>[];
@@ -1270,7 +1275,7 @@ class _RecordIntegrityPageState extends State<RecordIntegrityPage>{
   final report=RecordIntegrity.analyze(s.data!);
   return ListView(padding:const EdgeInsets.all(20),children:[
    Text('${report.recordsReviewed} records reviewed',style:const TextStyle(fontSize:23,fontWeight:FontWeight.w800)),
-   Text('Local checks for possible duplicates and conflicting measurements. Findings are review prompts, not automatic corrections.',style:TextStyle(color:Color(0xFF69708E))),
+   Text('Local checks for possible duplicates and conflicting measurements. Findings are review prompts, not automatic corrections.',style:TextStyle()),
    const SizedBox(height:16),
    if(report.findings.isEmpty)Text('No possible duplicates or conflicting measurements detected by the current rules.'),
    ...report.findings.map((f)=>Card(child:ListTile(leading:Icon(f.kind=='conflicting_measurements'?Icons.warning_amber:Icons.copy_outlined),title:Text(f.title),subtitle:Text('${f.detail}\\n${f.recordIds.length} records involved')))),
@@ -1292,10 +1297,10 @@ class _EmergencySummaryPageState extends State<EmergencySummaryPage>{
   Widget section(String title,List<Widget> children)=>Padding(padding:const EdgeInsets.only(bottom:16),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title,style:const TextStyle(fontSize:17,fontWeight:FontWeight.w800)),...children]));
   return ListView(padding:const EdgeInsets.all(20),children:[
    Text('Emergency health summary',style:TextStyle(fontSize:25,fontWeight:FontWeight.w900)),
-   Text('A locally stored summary for the patient to review and share. Not an emergency dispatch service.',style:TextStyle(color:Color(0xFF69708E))),
+   Text('A locally stored summary for the patient to review and share. Not an emergency dispatch service.',style:TextStyle()),
    section('Patient', [Text(profile?.payload['preferred_name']??'Name not recorded'),Text('Blood group: ${profile?.payload['blood_group']??'Not recorded'}'),Text('Emergency contact: ${profile?.payload['emergency_contact_name']??'Not recorded'} · ${profile?.payload['emergency_contact_phone']??''}')]),
    section('Relevant records',items.map((r)=>ListTile(contentPadding:EdgeInsets.zero,title:Text(r.payload['medication_name']??r.payload['substance']??r.payload['display']??r.resourceType),subtitle:Text(r.resourceType))).toList()),
-   Text('Keep this summary current. Information may be incomplete or unverified. No data is automatically sent to emergency services.',style:TextStyle(fontSize:12,color:Color(0xFF69708E))),
+   Text('Keep this summary current. Information may be incomplete or unverified. No data is automatically sent to emergency services.',style:TextStyle(fontSize:12)),
   ]);
  }));
 }
@@ -1314,7 +1319,7 @@ class AddRecordSheet extends StatelessWidget {
         child: Column(children: [
           Container(width: 44, height: 5, decoration: BoxDecoration(color: const Color(0xFFC7BFDC), borderRadius: BorderRadius.circular(5))),
           const SizedBox(height: 16),
-          const Align(alignment: Alignment.centerLeft, child: Text('Add to your health record', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF171B3D)))),
+          const Align(alignment: Alignment.centerLeft, child: Text('Add to your health record', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800))),
           const SizedBox(height: 12),
           Expanded(child: GridView.builder(
             padding: const EdgeInsets.only(bottom: 12),
@@ -1379,8 +1384,8 @@ class _CheckupFormState extends State<CheckupForm> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text('Log checkup', style: TextStyle(fontWeight: FontWeight.w800))),
     body: Form(key: formKey, child: ListView(padding: const EdgeInsets.all(20), children: [
-      Text('Record a visit', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
-      const SizedBox(height: 6), Text('Capture what happened and what needs to happen next.', style: TextStyle(color: Color(0xFF69708E))),
+      Text('Record a visit', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 6), Text('Capture what happened and what needs to happen next.', style: TextStyle()),
       const SizedBox(height: 20),
       DropdownButtonFormField<String>(value: type, decoration: const InputDecoration(labelText: 'Visit type'), items: ['Routine checkup','Consultation','Screening','Follow-up','Urgent visit','Other'].map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(), onChanged:(v)=>setState(()=>type=v!)),
       const SizedBox(height: 14),
@@ -1403,9 +1408,9 @@ class _CheckupFormState extends State<CheckupForm> {
       OutlinedButton.icon(onPressed: () async { final d=await showDatePicker(context:context, initialDate:nextFollowUp??date, firstDate:date, lastDate:DateTime(2100)); if(d!=null)setState(()=>nextFollowUp=d); }, icon: const Icon(Icons.event_available), label: Text(nextFollowUp==null?'Set next follow-up date':'Next follow-up: ${nextFollowUp!.year}-${nextFollowUp!.month.toString().padLeft(2,'0')}-${nextFollowUp!.day.toString().padLeft(2,'0')}')),
       if (availableObservations.isNotEmpty) ...[
         const SizedBox(height: 16),
-        Text('Link related vital observations', style: TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+        Text('Link related vital observations', style: TextStyle(fontWeight: FontWeight.w800)),
         const SizedBox(height: 4),
-        Text('Select any measurements recorded as part of this visit.', style: TextStyle(fontSize: 12, color: Color(0xFF69708E))),
+        Text('Select any measurements recorded as part of this visit.', style: TextStyle(fontSize: 12)),
         ...availableObservations.map((record) => CheckboxListTile(
           contentPadding: EdgeInsets.zero,
           value: linkedObservationIds.contains(record.id),
@@ -1417,7 +1422,7 @@ class _CheckupFormState extends State<CheckupForm> {
         )),
       ],
       const SizedBox(height: 12),
-      Text('Provenance: information entered here is patient-reported unless later authenticated by an authorized clinician.', style: TextStyle(fontSize: 12, color: Color(0xFF69708E))),
+      Text('Provenance: information entered here is patient-reported unless later authenticated by an authorized clinician.', style: TextStyle(fontSize: 12)),
       const SizedBox(height: 24),
       FilledButton(onPressed: () async {
         if (!formKey.currentState!.validate()) return;
@@ -1552,9 +1557,9 @@ class _ClinicalRecordFormState extends State<ClinicalRecordForm> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(_title, style: const TextStyle(fontWeight: FontWeight.w800))),
     body: Form(key: _formKey, child: ListView(padding: const EdgeInsets.all(20), children: [
-      Text(_title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+      Text(_title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
       const SizedBox(height: 6),
-      Text('Information you enter is saved as patient-reported and unverified.', style: TextStyle(color: Color(0xFF69708E))),
+      Text('Information you enter is saved as patient-reported and unverified.', style: TextStyle()),
       const SizedBox(height: 20),
       if (widget.kind == 'Vitals') ..._vitalFields(),
       if (widget.kind == 'Medication') ..._medicationFields(),
@@ -1601,7 +1606,7 @@ class _ClinicalRecordFormState extends State<ClinicalRecordForm> {
     const SizedBox(height: 14),
     _input(_doseTimes, 'Exact dose times (24-hour, comma-separated; e.g. 08:00, 20:00)'),
     const SizedBox(height: 5),
-    Text('Enter exact times from the prescription or clinician. Leave blank if not specified; reminders will not be generated.', style: TextStyle(fontSize: 12, color: Color(0xFF69708E))),
+    Text('Enter exact times from the prescription or clinician. Leave blank if not specified; reminders will not be generated.', style: TextStyle(fontSize: 12)),
     const SizedBox(height: 14),
     _input(_route, 'Route (e.g. oral, topical)'),
     const SizedBox(height: 14),
@@ -1913,13 +1918,13 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                   const Icon(Icons.medication_outlined, size: 42, color: Color(0xFF7938DB)),
                   const SizedBox(width: 14),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Medication tracker', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: ink)),
+                    Text('Medication tracker', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 260),
                       child: Text(
                         '${medications.where((m) => m.payload['status'] == 'active').length} active · ${logs.length} dose events recorded',
                         key: ValueKey('${medications.length}-${logs.length}'),
-                        style: const TextStyle(color: muted),
+                        style: const TextStyle(),
                       ),
                     ),
                   ])),
@@ -1927,7 +1932,7 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
               ),
               const SizedBox(height: 16),
               Row(children: [
-                const Expanded(child: Text('Your medications', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: ink))),
+                const Expanded(child: Text('Your medications', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800))),
                 TextButton.icon(onPressed: () async {
                   await Navigator.push(context, MaterialPageRoute(builder: (_) => const ClinicalRecordForm(kind: 'Medication')));
                   await _refresh();
@@ -1940,8 +1945,8 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                   child: const Column(children: [
                     Icon(Icons.medication_outlined, size: 38, color: Color(0xFF7938DB)),
                     SizedBox(height: 8),
-                    Text('No medication records yet', style: TextStyle(fontWeight: FontWeight.w800, color: ink)),
-                    Text('Add a medication to start recording its schedule and dose events.', textAlign: TextAlign.center, style: TextStyle(color: muted)),
+                    Text('No medication records yet', style: TextStyle(fontWeight: FontWeight.w800)),
+                    Text('Add a medication to start recording its schedule and dose events.', textAlign: TextAlign.center, style: TextStyle()),
                   ]),
                 )
               else ...medications.map((med) {
@@ -1962,11 +1967,11 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                     Row(children: [
                       const Icon(Icons.medication_outlined, color: Color(0xFF7938DB)),
                       const SizedBox(width: 8),
-                      Expanded(child: Text((p['medication_name'] ?? 'Medication').toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: ink))),
+                      Expanded(child: Text((p['medication_name'] ?? 'Medication').toString(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
                       Container(padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5), decoration: BoxDecoration(color: active ? const Color(0xFFE9F6EF) : const Color(0xFFF1F0F5), borderRadius: BorderRadius.circular(20)), child: Text((p['status'] ?? 'unknown').toString().replaceAll('_', ' '), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700))),
                     ]),
                     const SizedBox(height: 8),
-                    Text([p['dose'], p['route'], p['frequency']].where((v) => v != null && v.toString().trim().isNotEmpty).join(' · '), style: const TextStyle(color: muted)),
+                    Text([p['dose'], p['route'], p['frequency']].where((v) => v != null && v.toString().trim().isNotEmpty).join(' · '), style: const TextStyle()),
                     if ((p['dose_times'] as List?)?.isNotEmpty == true)
                       Padding(padding: const EdgeInsets.only(top:5), child: Wrap(spacing:6,runSpacing:5,children:[
                         const Icon(Icons.schedule,size:15,color:Color(0xFF7938DB)),
@@ -1975,9 +1980,9 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                           decoration:BoxDecoration(color:const Color(0xFFF2EAFE),borderRadius:BorderRadius.circular(12)),
                           child:Text(t.toString(),style:const TextStyle(fontSize:11,fontWeight:FontWeight.w800,color:Color(0xFF7938DB)))))),
                       ])),
-                    if (p['prescriber'] != null) Text('Prescriber: ${p['prescriber']}', style: const TextStyle(fontSize: 12, color: muted)),
-                    if (p['start_date'] != null || p['end_date'] != null) Text('Period: ${_date(p['start_date'])} → ${_date(p['end_date'])}', style: const TextStyle(fontSize: 12, color: muted)),
-                    if (p['quantity'] != null || p['refills_remaining'] != null) Text('Quantity: ${p['quantity'] ?? '—'} · Refills remaining: ${p['refills_remaining'] ?? '—'}', style: const TextStyle(fontSize: 12, color: muted)),
+                    if (p['prescriber'] != null) Text('Prescriber: ${p['prescriber']}', style: const TextStyle(fontSize: 12)),
+                    if (p['start_date'] != null || p['end_date'] != null) Text('Period: ${_date(p['start_date'])} → ${_date(p['end_date'])}', style: const TextStyle(fontSize: 12)),
+                    if (p['quantity'] != null || p['refills_remaining'] != null) Text('Quantity: ${p['quantity'] ?? '—'} · Refills remaining: ${p['refills_remaining'] ?? '—'}', style: const TextStyle(fontSize: 12)),
                     if (refill != null) Padding(padding: const EdgeInsets.only(top: 4), child: Row(children: [
                       Icon(Icons.event_repeat, size: 15, color: isRefillDue ? const Color(0xFFB36A17) : muted),
                       const SizedBox(width: 5),
@@ -1985,25 +1990,25 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                     ])),
                     const Divider(height: 22),
                     Row(children: [
-                      Expanded(child: Text('${medLogs.length} dose events', style: const TextStyle(fontWeight: FontWeight.w700, color: ink))),
+                      Expanded(child: Text('${medLogs.length} dose events', style: const TextStyle(fontWeight: FontWeight.w700))),
                       TextButton(onPressed: () async {
                         await Navigator.push(context, MaterialPageRoute(builder: (_) => ClinicalRecordForm(kind: 'Medication', existing: med)));
                         await _refresh();
                       }, child: Text('Edit')),
                     ]),
                     if (medLogs.isNotEmpty)
-                      Text('Latest: ${medLogs.first.payload['event_type']} · ${medLogs.first.recordedAt.toLocal().toString().split('.').first}', style: const TextStyle(fontSize: 12, color: muted)),
+                      Text('Latest: ${medLogs.first.payload['event_type']} · ${medLogs.first.recordedAt.toLocal().toString().split('.').first}', style: const TextStyle(fontSize: 12)),
                     if (active) Wrap(spacing: 4, children: [
                       TextButton.icon(onPressed: () => _log(med, 'taken'), icon: const Icon(Icons.check_circle_outline, size: 17), label: Text('Taken')),
                       TextButton.icon(onPressed: () => _log(med, 'missed'), icon: const Icon(Icons.schedule, size: 17), label: Text('Missed')),
                       TextButton.icon(onPressed: () => _log(med, 'skipped'), icon: const Icon(Icons.remove_circle_outline, size: 17), label: Text('Skipped')),
                     ]),
-                    Text('Dose events are patient-reported and do not verify ingestion.', style: TextStyle(fontSize: 10, color: muted)),
+                    Text('Dose events are patient-reported and do not verify ingestion.', style: TextStyle(fontSize: 10)),
                   ]),
                 );
               }),
               const SizedBox(height: 12),
-              Text('No interaction checking is performed. Confirm medication combinations, dosing and changes with a qualified pharmacist or clinician.', style: TextStyle(fontSize: 11, color: muted, height: 1.4)),
+              Text('No interaction checking is performed. Confirm medication combinations, dosing and changes with a qualified pharmacist or clinician.', style: TextStyle(fontSize: 11, height: 1.4)),
             ],
           ),
         );
@@ -2030,11 +2035,11 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
     final related=records.where((r)=>relationship.sourceRecordIds.contains(r.id)).toList();
     await showModalBottomSheet<void>(context:context,isScrollControlled:true,shape:const RoundedRectangleBorder(borderRadius:BorderRadius.vertical(top:Radius.circular(24))),
       builder:(ctx)=>SafeArea(child:Padding(padding:const EdgeInsets.all(20),child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
-        Text(relationship.title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+        Text(relationship.title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)),
         const SizedBox(height:8),
-        Text(relationship.description,style:const TextStyle(color:Color(0xFF69708E),height:1.4)),
+        Text(relationship.description,style:const TextStyle(height:1.4)),
         const SizedBox(height:14),
-        Text('Source records',style:TextStyle(fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+        Text('Source records',style:TextStyle(fontWeight:FontWeight.w800)),
         const SizedBox(height:7),
         ...related.map((r){
           final label=switch(r.resourceType){
@@ -2048,10 +2053,10 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
           };
           return ListTile(contentPadding:EdgeInsets.zero,dense:true,leading:const Icon(Icons.lock_outline,color:Color(0xFF7938DB)),
             title:Text(label,style:const TextStyle(fontWeight:FontWeight.w700,fontSize:13)),
-            subtitle:Text('${r.resourceType} · ${_date(r.recordedAt.toLocal())} · patient/imported record',style:const TextStyle(fontSize:11,color:Color(0xFF69708E))));
+            subtitle:Text('${r.resourceType} · ${_date(r.recordedAt.toLocal())} · patient/imported record',style:const TextStyle(fontSize:11)));
         }),
         const SizedBox(height:8),
-        Text('These records are shown together because their recorded dates overlap. This does not establish causation.',style:TextStyle(fontSize:11,color:Color(0xFF69708E))),
+        Text('These records are shown together because their recorded dates overlap. This does not establish causation.',style:TextStyle(fontSize:11)),
         Align(alignment:Alignment.centerRight,child:TextButton(onPressed:()=>Navigator.pop(ctx),child:Text('Close'))),
       ]))));
   }
@@ -2061,9 +2066,9 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
       final data=snapshot.data!.$1;final records=snapshot.data!.$2;
       return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(18),border:Border.all(color:Theme.of(context).colorScheme.outlineVariant)),
         child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          Row(children:[const Icon(Icons.hub_outlined,color:Color(0xFF7938DB),size:26),const SizedBox(width:9),const Expanded(child:Text('Cross-domain relationships',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))))]),
+          Row(children:[const Icon(Icons.hub_outlined,color:Color(0xFF7938DB),size:26),const SizedBox(width:9),const Expanded(child:Text('Cross-domain relationships',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800)))]),
           const SizedBox(height:5),
-          Text('Records that occurred near one another in time. These are review prompts, not medical conclusions.',style:TextStyle(fontSize:11,color:Color(0xFF69708E))),
+          Text('Records that occurred near one another in time. These are review prompts, not medical conclusions.',style:TextStyle(fontSize:11)),
           const SizedBox(height:14),
           Wrap(spacing:14,runSpacing:10,children:[
             _miniMetric('Symptoms','${data.symptomEpisodesCompared}'),
@@ -2074,9 +2079,9 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
           ]),
           const Divider(height:24),
           if(data.relationships.isEmpty)
-            const Padding(padding:EdgeInsets.symmetric(vertical:10),child:Text('Not enough overlapping dated records to show relationships yet. Add symptom episodes, measurements, dose events, visits or documents to build a richer timeline.',style:TextStyle(fontSize:12,color:Color(0xFF69708E),height:1.4)))
+            const Padding(padding:EdgeInsets.symmetric(vertical:10),child:Text('Not enough overlapping dated records to show relationships yet. Add symptom episodes, measurements, dose events, visits or documents to build a richer timeline.',style:TextStyle(fontSize:12,height:1.4)))
           else ...[
-            Text('${data.relationships.length} temporal overlap(s) found',style:const TextStyle(fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+            Text('${data.relationships.length} temporal overlap(s) found',style:const TextStyle(fontWeight:FontWeight.w800)),
             const SizedBox(height:8),
             ...data.relationships.take(8).map((r)=>InkWell(
               borderRadius:BorderRadius.circular(12),
@@ -2091,9 +2096,9 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
                 },color:const Color(0xFF7938DB),size:19)),
                 const SizedBox(width:10),
                 Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-                  Text(r.title,style:const TextStyle(fontWeight:FontWeight.w700,color:Color(0xFF171B3D),fontSize:13)),
+                  Text(r.title,style:const TextStyle(fontWeight:FontWeight.w700,fontSize:13)),
                   const SizedBox(height:3),
-                  Text(r.description,maxLines:3,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize:11,color:Color(0xFF69708E),height:1.35)),
+                  Text(r.description,maxLines:3,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize:11,height:1.35)),
                   const SizedBox(height:3),
                   Text('${_date(r.firstAt.toLocal())} · ${r.eventCount} source records',style:const TextStyle(fontSize:10,color:Color(0xFF8A8FA7))),
                 ])),
@@ -2103,7 +2108,7 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
           ],
           const Divider(height:20),
           ...data.notes.map((n)=>Padding(padding:const EdgeInsets.only(bottom:5),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
-            const Icon(Icons.info_outline,size:14,color:Color(0xFF8A8FA7)),const SizedBox(width:6),Expanded(child:Text(n,style:const TextStyle(fontSize:10,color:Color(0xFF69708E),height:1.35)))
+            const Icon(Icons.info_outline,size:14,color:Color(0xFF8A8FA7)),const SizedBox(width:6),Expanded(child:Text(n,style:const TextStyle(fontSize:10,height:1.35)))
           ]))),
         ]),
       );
@@ -2125,9 +2130,9 @@ class _SymptomEntryFormState extends State<SymptomEntryForm> {
   @override Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:Text('Log a symptom')),
     body:ListView(padding:const EdgeInsets.all(20),children:[
-      Text('Record what you experienced',style:TextStyle(fontSize:24,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+      Text('Record what you experienced',style:TextStyle(fontSize:24,fontWeight:FontWeight.w800)),
       const SizedBox(height:6),
-      Text('Your entries help you review your own symptom history. They do not provide a diagnosis.',style:TextStyle(color:Color(0xFF69708E))),
+      Text('Your entries help you review your own symptom history. They do not provide a diagnosis.',style:TextStyle()),
       const SizedBox(height:20),
       TextField(controller:_name,decoration:const InputDecoration(labelText:'Symptom (e.g. headache, nausea)',border:OutlineInputBorder())),
       const SizedBox(height:14),
@@ -2146,7 +2151,7 @@ class _SymptomEntryFormState extends State<SymptomEntryForm> {
       const SizedBox(height:14),
       TextField(controller:_notes,maxLines:4,decoration:const InputDecoration(labelText:'Additional notes (optional)',border:OutlineInputBorder())),
       const SizedBox(height:12),
-      Text('Possible triggers are your own observations, not confirmed causes.',style:TextStyle(fontSize:12,color:Color(0xFF69708E))),
+      Text('Possible triggers are your own observations, not confirmed causes.',style:TextStyle(fontSize:12)),
       const SizedBox(height:20),
       FilledButton.icon(onPressed:_saving?null:()async{
         if(_name.text.trim().isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Enter a symptom name.')));return;}
@@ -2182,9 +2187,9 @@ class _HealthJournalFormState extends State<HealthJournalForm>{
   @override Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:Text('Health journal')),
     body:ListView(padding:const EdgeInsets.all(20),children:[
-      Text('A little context matters',style:TextStyle(fontSize:24,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+      Text('A little context matters',style:TextStyle(fontSize:24,fontWeight:FontWeight.w800)),
       const SizedBox(height:6),
-      Text('Capture how you are feeling and anything you want to remember about your day.',style:TextStyle(color:Color(0xFF69708E))),
+      Text('Capture how you are feeling and anything you want to remember about your day.',style:TextStyle()),
       const SizedBox(height:20),
       _rating('Mood',_mood,(v)=>setState(()=>_mood=v)),
       _rating('Energy',_energy,(v)=>setState(()=>_energy=v)),
@@ -2192,7 +2197,7 @@ class _HealthJournalFormState extends State<HealthJournalForm>{
       const SizedBox(height:8),
       TextField(controller:_entry,minLines:5,maxLines:10,decoration:const InputDecoration(labelText:'Journal entry',hintText:'What did you notice today?',alignLabelWithHint:true,border:OutlineInputBorder())),
       const SizedBox(height:8),
-      Text('Scores are personal self-ratings (1–5), not clinical scales.',style:TextStyle(fontSize:12,color:Color(0xFF69708E))),
+      Text('Scores are personal self-ratings (1–5), not clinical scales.',style:TextStyle(fontSize:12)),
       const SizedBox(height:20),
       FilledButton.icon(onPressed:_saving?null:()async{
         if(_entry.text.trim().isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Write a short journal entry first.')));return;}
@@ -2224,7 +2229,7 @@ class _SymptomJournalInsightsPanelState extends State<SymptomJournalInsightsPane
       String score(double? v)=>v==null?'—':'${v.toStringAsFixed(1)} / 5';
       return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(18),border:Border.all(color:Theme.of(context).colorScheme.outlineVariant)),
         child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-          Row(children:[const Icon(Icons.timeline,color:Color(0xFF7938DB),size:26),const SizedBox(width:9),const Expanded(child:Text('Symptom & journal patterns',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))))]),
+          Row(children:[const Icon(Icons.timeline,color:Color(0xFF7938DB),size:26),const SizedBox(width:9),const Expanded(child:Text('Symptom & journal patterns',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800)))]),
           const SizedBox(height:10),
           Row(children:[
             Expanded(child:_miniMetric('Symptom types','${data.patterns.length}')),
@@ -2232,17 +2237,17 @@ class _SymptomJournalInsightsPanelState extends State<SymptomJournalInsightsPane
             Expanded(child:_miniMetric('Journal entries','${data.journalEntries}')),
           ]),
           const Divider(height:24),
-          Text('Recorded symptom patterns',style:TextStyle(fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+          Text('Recorded symptom patterns',style:TextStyle(fontWeight:FontWeight.w800)),
           const SizedBox(height:8),
-          if(data.patterns.isEmpty)Text('No symptom episodes recorded yet.',style:TextStyle(color:Color(0xFF69708E),fontSize:12)),
+          if(data.patterns.isEmpty)Text('No symptom episodes recorded yet.',style:TextStyle(fontSize:12)),
           ...data.patterns.take(5).map((p)=>Padding(padding:const EdgeInsets.only(bottom:10),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-            Row(children:[Expanded(child:Text(p.name,style:const TextStyle(fontWeight:FontWeight.w700,color:Color(0xFF171B3D)))),Text('${p.episodes} ${p.episodes==1?'episode':'episodes'}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E)))]),
+            Row(children:[Expanded(child:Text(p.name,style:const TextStyle(fontWeight:FontWeight.w700))),Text('${p.episodes} ${p.episodes==1?'episode':'episodes'}',style:const TextStyle(fontSize:11))]),
             const SizedBox(height:3),
-            Text('Average self-rated severity ${p.averageSeverity.toStringAsFixed(1)}/10 · highest ${p.highestSeverity}/10 · latest ${p.latestAt.toLocal().toString().split(' ').first}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E))),
-            if(p.commonTriggers.isNotEmpty)Text('Commonly noted possible triggers: ${p.commonTriggers.take(3).map((e)=>e).join(', ')}',style:const TextStyle(fontSize:11,color:Color(0xFF69708E))),
+            Text('Average self-rated severity ${p.averageSeverity.toStringAsFixed(1)}/10 · highest ${p.highestSeverity}/10 · latest ${p.latestAt.toLocal().toString().split(' ').first}',style:const TextStyle(fontSize:11)),
+            if(p.commonTriggers.isNotEmpty)Text('Commonly noted possible triggers: ${p.commonTriggers.take(3).map((e)=>e).join(', ')}',style:const TextStyle(fontSize:11)),
           ]))),
           const Divider(height:22),
-          Text('Journal self-ratings',style:TextStyle(fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+          Text('Journal self-ratings',style:TextStyle(fontWeight:FontWeight.w800)),
           const SizedBox(height:7),
           Row(children:[
             Expanded(child:_miniMetric('Mood',score(data.averageMood))),
@@ -2250,15 +2255,15 @@ class _SymptomJournalInsightsPanelState extends State<SymptomJournalInsightsPane
             Expanded(child:_miniMetric('Stress',score(data.averageStress))),
           ]),
           const SizedBox(height:10),
-          Text('Descriptive summaries of patient-entered information only. These patterns do not establish a cause, diagnosis or medical risk.',style:TextStyle(fontSize:11,color:Color(0xFF69708E),height:1.4)),
+          Text('Descriptive summaries of patient-entered information only. These patterns do not establish a cause, diagnosis or medical risk.',style:TextStyle(fontSize:11,height:1.4)),
         ]),
       );
     },
   );
 }
 Widget _miniMetric(String label,String value)=>Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-  Text(label,style:const TextStyle(fontSize:10,color:Color(0xFF69708E))),
-  const SizedBox(height:3),Text(value,style:const TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))),
+  Text(label,style:const TextStyle(fontSize:10)),
+  const SizedBox(height:3),Text(value,style:const TextStyle(fontSize:16,fontWeight:FontWeight.w800)),
 ]);
 
 class DocumentCaptureForm extends StatefulWidget {
@@ -2350,7 +2355,7 @@ class _DocumentCaptureFormState extends State<DocumentCaptureForm> {
                 subtitle:Text('Page ${c.page} · ${(c.heuristicConfidence*100).round()}% heuristic · ${c.evidence}',maxLines:3,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize:10)),
                 onChanged:(v)=>setDialog(()=>selected[i]=v??false));
             }),
-            ...understanding.notes.map((n)=>Padding(padding:const EdgeInsets.only(top:5),child:Text('• $n',style:const TextStyle(fontSize:10,color:Color(0xFF69708E))))),
+            ...understanding.notes.map((n)=>Padding(padding:const EdgeInsets.only(top:5),child:Text('• $n',style:const TextStyle(fontSize:10)))),
           ]))),
           actions:[
             TextButton(onPressed:()=>Navigator.pop(ctx,false),child:Text('Discard extraction')),
@@ -2416,9 +2421,9 @@ class _DocumentCaptureFormState extends State<DocumentCaptureForm> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text('Add medical document')),
     body: ListView(padding: const EdgeInsets.all(20), children: [
-      Text('Keep a copy of your medical documents', style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+      Text('Keep a copy of your medical documents', style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800)),
       const SizedBox(height: 6),
-      Text('Files are encrypted before being written to this device. Maximum file size: 20 MB. Image OCR runs locally; extracted text and any accepted annotations are saved encrypted and remain unverified.', style: TextStyle(color: Color(0xFF69708E))),
+      Text('Files are encrypted before being written to this device. Maximum file size: 20 MB. Image OCR runs locally; extracted text and any accepted annotations are saved encrypted and remain unverified.', style: TextStyle()),
       const SizedBox(height: 20),
       OutlinedButton.icon(onPressed: _pick, icon: const Icon(Icons.attach_file), label: Text(_selected?.name ?? 'Choose PDF or image')),
       const SizedBox(height: 8),
@@ -2431,7 +2436,7 @@ class _DocumentCaptureFormState extends State<DocumentCaptureForm> {
       ),
       if (_extractionMessage != null) Padding(
         padding: const EdgeInsets.only(top: 7, bottom: 8),
-        child: Text(_extractionMessage!, style: const TextStyle(fontSize: 12, color: Color(0xFF69708E))),
+        child: Text(_extractionMessage!, style: const TextStyle(fontSize: 12)),
       ),
       if (_extractedText != null && _extractedText!.isNotEmpty)
         Container(
@@ -2573,9 +2578,9 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
   Widget build(BuildContext context) {
     if (_loading) return const Center(child: CircularProgressIndicator());
     return ListView(padding: const EdgeInsets.fromLTRB(20, 22, 20, 110), children: [
-      Text('Your profile', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+      Text('Your profile', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800)),
       const SizedBox(height: 6),
-      Text('Your personal details and emergency contact information.', style: TextStyle(color: Color(0xFF69708E))),
+      Text('Your personal details and emergency contact information.', style: TextStyle()),
       const SizedBox(height: 20),
       _field(_preferred, 'Preferred name'),
       _field(_legal, 'Legal name'),
@@ -2611,13 +2616,13 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
       const SizedBox(height: 12),
       _field(_height, 'Height (cm)', keyboard: const TextInputType.numberWithOptions(decimal: true)),
       const SizedBox(height: 10),
-      Text('Emergency contact', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
+      Text('Emergency contact', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
       const SizedBox(height: 12),
       _field(_contact, 'Contact name'),
       _field(_relationship, 'Relationship'),
       _field(_phone, 'Phone number', keyboard: TextInputType.phone),
       const SizedBox(height: 10),
-      Text('Profile details are encrypted locally. Emergency contacts are stored as information only; this stage does not provide emergency notification or emergency access.', style: TextStyle(fontSize: 12, color: Color(0xFF69708E), height: 1.4)),
+      Text('Profile details are encrypted locally. Emergency contacts are stored as information only; this stage does not provide emergency notification or emergency access.', style: TextStyle(fontSize: 12, height: 1.4)),
       const SizedBox(height: 18),
       FilledButton(onPressed: _saving ? null : _save, child: Padding(padding: const EdgeInsets.all(14), child: Text(_saving ? 'Saving…' : 'Save profile securely'))),
     ]);
@@ -2630,7 +2635,7 @@ class PlaceholderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(child: Padding(padding: const EdgeInsets.all(28), child: Column(mainAxisSize: MainAxisSize.min, children: [
     const Icon(Icons.auto_awesome, size: 42, color: Color(0xFF7938DB)), const SizedBox(height: 14),
-    Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
-    const SizedBox(height: 8), Text(subtitle, textAlign: TextAlign.center, style: const TextStyle(color: Color(0xFF69708E))),
+    Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
+    const SizedBox(height: 8), Text(subtitle, textAlign: TextAlign.center, style: const TextStyle()),
   ])));
 }
