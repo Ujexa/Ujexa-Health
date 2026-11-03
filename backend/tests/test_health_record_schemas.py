@@ -149,7 +149,7 @@ def test_symptom_entry_requires_valid_severity_and_preserves_patient_provenance(
     assert record.resource_type == "symptom_entry"
     assert record.provenance.verification_status == "unverified"
     import pytest
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         SymptomEntry(**{**base, "severity": 11})
 
 
@@ -163,7 +163,7 @@ def test_health_journal_scores_are_bounded():
     }
     assert HealthJournalEntry(**base).energy_score == 2
     import pytest
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         HealthJournalEntry(**{**base, "mood_score": 0})
 
 
