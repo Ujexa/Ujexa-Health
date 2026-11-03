@@ -71,7 +71,7 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
         const Text('YOUR INBOX',style:TextStyle(fontWeight:FontWeight.w800,letterSpacing:1.2,fontSize:11)),
         const SizedBox(height:8),
         if(center.items.isEmpty) Container(padding:const EdgeInsets.all(24),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(20)),
-          child:const Column(children:[Icon(Icons.notifications_off_outlined,size:38,color:Color(0xFF9A91B3)),
+          child:Column(children:[const Icon(Icons.notifications_off_outlined,size:38,color:Color(0xFF9A91B3)),
             SizedBox(height:8),Text('All quiet here',style:TextStyle(fontWeight:FontWeight.w800,color:ink,fontSize:17)),
             Text('Only reminders you create or important app events will appear here.',textAlign:TextAlign.center,style:TextStyle()) ]))
         else ...center.items.map((n)=>Padding(padding:const EdgeInsets.only(bottom:9),child:InkWell(
