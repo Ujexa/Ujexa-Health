@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -41,70 +41,71 @@ jobs:
             flutter create --platforms=android --org com.ujexa.health --project-name ujexa_health .
           fi
 
-      - name: Enable Android core library desugaring
+      - name: Configure Android release build
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
-          app = Path("android/app")
-          kotlin = app / "build.gradle.kts"
-          groovy = app / "build.gradle"
+          app_dir = Path("android/app")
+          gradle_kts = app_dir / "build.gradle.kts"
+          gradle_groovy = app_dir / "build.gradle"
 
-          if kotlin.exists():
-              path = kotlin
-              source = path.read_text()
-              compile_block = "compileOptions {"
-              dependency_block = "dependencies {"
+          if gradle_kts.is_file():
+              gradle_file = gradle_kts
+              source = gradle_file.read_text()
+              compile_options = re.search(r"(?m)^\\s*compileOptions\\s*\\{", source)
+              if not compile_options:
+                  raise SystemExit(f"Missing compileOptions block in {gradle_file}")
+
               if "isCoreLibraryDesugaringEnabled" not in source:
-                  if compile_block not in source:
-                      raise SystemExit("Could not find compileOptions in build.gradle.kts")
-                  source = source.replace(
-                      compile_block,
-                      compile_block + "\n        isCoreLibraryDesugaringEnabled = true",
-                      1,
-                  )
+                  insert_at = compile_options.end()
+                  source = source[:insert_at] + "\\n        isCoreLibraryDesugaringEnabled = true" + source[insert_at:]
+
               if "desugar_jdk_libs" not in source:
-                  if dependency_block not in source:
-                      raise SystemExit("Could not find dependencies in build.gradle.kts")
-                  source = source.replace(
-                      dependency_block,
-                      dependency_block + '\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',
-                      1,
+                  source = source.rstrip() + (
+                      '\\n\\ndependencies {\\n'
+                      '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\\n'
+                      '}\\n'
                   )
-          elif groovy.exists():
-              path = groovy
-              source = path.read_text()
+
+          elif gradle_groovy.is_file():
+              gradle_file = gradle_groovy
+              source = gradle_file.read_text()
+              compile_options = re.search(r"(?m)^\\s*compileOptions\\s*\\{", source)
+              if not compile_options:
+                  raise SystemExit(f"Missing compileOptions block in {gradle_file}")
+
               if "coreLibraryDesugaringEnabled" not in source:
-                  marker = "compileOptions {"
-                  if marker not in source:
-                      raise SystemExit("Could not find compileOptions in build.gradle")
-                  source = source.replace(
-                      marker,
-                      marker + "\n        coreLibraryDesugaringEnabled true",
-                      1,
-                  )
+                  insert_at = compile_options.end()
+                  source = source[:insert_at] + "\\n        coreLibraryDesugaringEnabled true" + source[insert_at:]
+
               if "desugar_jdk_libs" not in source:
-                  marker = "dependencies {"
-                  if marker not in source:
-                      raise SystemExit("Could not find dependencies in build.gradle")
-                  source = source.replace(
-                      marker,
-                      marker + "\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'",
-                      1,
+                  source = source.rstrip() + (
+                      "\\n\\ndependencies {\\n"
+                      "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\\n"
+                      "}\\n"
                   )
           else:
-              raise SystemExit("No Android app Gradle build file found")
+              raise SystemExit("Flutter did not generate android/app/build.gradle(.kts)")
 
-          path.write_text(source)
-          print(f"Enabled core library desugaring in {path}")
+          if "desugar_jdk_libs:2.1.4" not in source:
+              raise SystemExit("Desugaring dependency was not configured")
+          if not ("isCoreLibraryDesugaringEnabled = true" in source or
+                  "coreLibraryDesugaringEnabled true" in source):
+              raise SystemExit("Core library desugaring flag was not configured")
+
+          gradle_file.write_text(source)
+          print(f"Configured core library desugaring in {gradle_file}")
+          print("--- Android app Gradle configuration ---")
+          print(source)
           PY
 
       - name: Remove generated placeholder widget test
         shell: bash
         run: |
-          # flutter create generates a starter test that assumes a MyApp widget.
-          # Ujexa Health boots through main() and does not define that template widget.
+          # Flutter creates a template test that references MyApp, which this app does not define.
           if [ -f test/widget_test.dart ] && grep -q "MyApp" test/widget_test.dart; then
             rm test/widget_test.dart
           fi
@@ -122,10 +123,15 @@ jobs:
         run: flutter test
 
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --verbose
 
-      - name: Generate artifact checksum
-        run: sha256sum build/app/outputs/flutter-apk/app-release.apk > build/app/outputs/flutter-apk/app-release.apk.sha256
+      - name: Verify release APK
+        shell: bash
+        run: |
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          test -s "$APK"
+          ls -lh "$APK"
+          sha256sum "$APK" > "$APK.sha256"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
