@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import String, DateTime, Boolean, ForeignKey, Text, Index, LargeBinary, Integer
+from sqlalchemy import String, DateTime, Boolean, Text, Index, LargeBinary, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 from ..database import Base
 
