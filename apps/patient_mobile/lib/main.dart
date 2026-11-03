@@ -174,7 +174,7 @@ class _PatientShellState extends State<PatientShell> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor, surfaceTintColor: Colors.transparent,
         leading: Builder(builder:(context)=>IconButton(tooltip:'Open navigation',icon:const Icon(Icons.menu_rounded),onPressed:()=>Scaffold.of(context).openDrawer())),
         title: Row(mainAxisSize:MainAxisSize.min,children:[
-          Container(width:32,height:32,decoration:const BoxDecoration(color:Colors.white,shape:BoxShape.circle),
+          Container(width:32,height:32,decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerHighest,shape:BoxShape.circle),
             child:ClipOval(child:Image.asset('assets/ujexa_health_mark.png',fit:BoxFit.cover))),
           const SizedBox(width:8),
           const Text('Ujexa Health',style:TextStyle(fontWeight:FontWeight.w900,fontSize:16,letterSpacing:-.3)),
@@ -450,7 +450,7 @@ class _RecordsPageState extends State<RecordsPage> {
             else if (records.isEmpty)
               Container(
                 padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22), border: Border.all(color: const Color(0xFFE8E8F2))),
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(22), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)),
                 child: Column(children: [
                   const Icon(Icons.filter_list_off, size: 38, color: Color(0xFF7938DB)),
                   const SizedBox(height: 10),
@@ -477,7 +477,7 @@ class _RecordsPageState extends State<RecordsPage> {
                 ...group.value.map((record) => Container(
                   margin: const EdgeInsets.only(bottom: 9),
                   padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(17), border: Border.all(color: const Color(0xFFECECF4))),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(17), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
                       Icon(_iconFor(record.resourceType), size: 19, color: const Color(0xFF7938DB)),
@@ -605,7 +605,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       tween: Tween(begin: .92, end: 1), duration: Duration(milliseconds: 380 + index * 75), curve: Curves.easeOutBack,
       builder: (context, value, child) => Transform.scale(scale: value, child: child),
       child: Material(
-        color: tint, borderRadius: BorderRadius.circular(23),
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surfaceContainerHighest : tint, borderRadius: BorderRadius.circular(23),
         child: InkWell(
           borderRadius: BorderRadius.circular(23), onTap: onTap,
           child: SizedBox(height: 116, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -728,7 +728,7 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
   Widget _panel({required Widget child}) => Container(
     width: double.infinity,
     padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFECECF4))),
+    decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(18), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)),
     child: child,
   );
 
@@ -784,7 +784,7 @@ class _HealthInsightsPageState extends State<HealthInsightsPage> {
             _sectionTitle('Personal health intelligence', 'A private model studies changes in your own recorded history.'),
             _panel(child: Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
               Row(children:[
-                Container(width:44,height:44,decoration:BoxDecoration(color:const Color(0xFFF0EAFE),borderRadius:BorderRadius.circular(14)),
+                Container(width:44,height:44,decoration:BoxDecoration(color:Theme.of(context).colorScheme.secondaryContainer,borderRadius:BorderRadius.circular(14)),
                   child:const Icon(Icons.hub_outlined,color:Color(0xFF7938DB),size:25)),
                 const SizedBox(width:11),
                 const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
@@ -962,7 +962,7 @@ class OverviewCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(18), decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(28),
-      gradient: const LinearGradient(colors: [Color(0xFFF3EAFF), Color(0xFFE2D9FF)]),
+      gradient: Theme.of(context).brightness == Brightness.dark ? LinearGradient(colors: [Theme.of(context).colorScheme.surfaceContainerHighest, Theme.of(context).colorScheme.surfaceContainerLow]) : const LinearGradient(colors: [Color(0xFFF3EAFF), Color(0xFFE2D9FF)]),
     ),
     child: Row(children: [
       SizedBox(width: 132, height: 132, child: Stack(alignment: Alignment.center, children: [
@@ -991,7 +991,7 @@ class MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 6),
-    decoration: BoxDecoration(color: tint, borderRadius: BorderRadius.circular(20)),
+    decoration: BoxDecoration(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surfaceContainerHighest : tint, borderRadius: BorderRadius.circular(20)),
     child: Column(children: [
       Icon(icon, color: const Color(0xFF7938DB), size: 25),
       const SizedBox(height: 6),
@@ -1006,7 +1006,7 @@ class FeatureCard extends StatelessWidget {
   const FeatureCard({super.key, required this.icon, required this.title, required this.detail, required this.foot, required this.tint});
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22), border: Border.all(color: const Color(0xFFEEEFF6))),
+    padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(22), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)),
     child: Row(children: [
       CircleAvatar(backgroundColor: tint, foregroundColor: const Color(0xFF7938DB), child: Icon(icon)),
       const SizedBox(width: 12),
@@ -1117,7 +1117,7 @@ class _DocumentPromotionWorkspaceState extends State<DocumentPromotionWorkspace>
         ...pending.map((item){
           final doc=item.doc;final a=item.annotation;final fields=Map<String,String>.from(a['fields'] as Map);final kind=a['kind'];
           final evidence=a['evidence'];final page=a['page'];
-          return Container(margin:const EdgeInsets.only(bottom:14),padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(17),border:Border.all(color:const Color(0xFFEAE8F1))),
+          return Container(margin:const EdgeInsets.only(bottom:14),padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(17),border:Border.all(color:Theme.of(context).colorScheme.outlineVariant)),
             child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
               Text(doc.payload['title']??'Medical document',style:const TextStyle(fontWeight:FontWeight.w800,fontSize:15,color:Color(0xFF171B3D))),
               Text('Page $page · ${kind.toString().replaceAll('_',' ')}',style:const TextStyle(fontSize:11,color:Color(0xFF7938DB))),
@@ -1310,7 +1310,7 @@ class AddRecordSheet extends StatelessWidget {
       heightFactor: .88,
       child: Container(
         padding: EdgeInsets.fromLTRB(18, 12, 18, MediaQuery.of(context).viewInsets.bottom + 16),
-        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+        decoration: const BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
         child: Column(children: [
           Container(width: 44, height: 5, decoration: BoxDecoration(color: const Color(0xFFC7BFDC), borderRadius: BorderRadius.circular(5))),
           const SizedBox(height: 16),
@@ -1907,7 +1907,7 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(22),
-                  gradient: const LinearGradient(colors: [Color(0xFFF2EAFE), Color(0xFFE7E1FF)]),
+                  gradient: Theme.of(context).brightness == Brightness.dark ? LinearGradient(colors: [Theme.of(context).colorScheme.surfaceContainerHighest, Theme.of(context).colorScheme.surfaceContainerLow]) : const LinearGradient(colors: [Color(0xFFF2EAFE), Color(0xFFE7E1FF)]),
                 ),
                 child: Row(children: [
                   const Icon(Icons.medication_outlined, size: 42, color: Color(0xFF7938DB)),
@@ -1936,7 +1936,7 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
               if (medications.isEmpty)
                 Container(
                   padding: const EdgeInsets.all(22),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFECECF4))),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(18), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)),
                   child: const Column(children: [
                     Icon(Icons.medication_outlined, size: 38, color: Color(0xFF7938DB)),
                     SizedBox(height: 8),
@@ -1957,7 +1957,7 @@ class _MedicationManagementPageState extends State<MedicationManagementPage> {
                   curve: Curves.easeOutCubic,
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFECECF4))),
+                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(18), border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
                       const Icon(Icons.medication_outlined, color: Color(0xFF7938DB)),
@@ -2059,7 +2059,7 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
     future:_future,builder:(context,snapshot){
       if(!snapshot.hasData)return const Padding(padding:EdgeInsets.all(18),child:Center(child:CircularProgressIndicator()));
       final data=snapshot.data!.$1;final records=snapshot.data!.$2;
-      return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),border:Border.all(color:const Color(0xFFECECF4))),
+      return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(18),border:Border.all(color:Theme.of(context).colorScheme.outlineVariant)),
         child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
           Row(children:[const Icon(Icons.hub_outlined,color:Color(0xFF7938DB),size:26),const SizedBox(width:9),const Expanded(child:Text('Cross-domain relationships',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))))]),
           const SizedBox(height:5),
@@ -2082,7 +2082,7 @@ class _CrossDomainHealthPanelState extends State<CrossDomainHealthPanel>{
               borderRadius:BorderRadius.circular(12),
               onTap:()=>_showRelationship(r,records),
               child:Padding(padding:const EdgeInsets.symmetric(vertical:9),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
-                Container(width:34,height:34,decoration:BoxDecoration(color:const Color(0xFFF0EAFE),borderRadius:BorderRadius.circular(10)),child:Icon(switch(r.kind){
+                Container(width:34,height:34,decoration:BoxDecoration(color:Theme.of(context).colorScheme.secondaryContainer,borderRadius:BorderRadius.circular(10)),child:Icon(switch(r.kind){
                   'symptom_observation'=>Icons.monitor_heart_outlined,
                   'symptom_medication'=>Icons.medication_outlined,
                   'symptom_journal'=>Icons.edit_note,
@@ -2222,7 +2222,7 @@ class _SymptomJournalInsightsPanelState extends State<SymptomJournalInsightsPane
       if(!snapshot.hasData)return const Padding(padding:EdgeInsets.all(18),child:Center(child:CircularProgressIndicator()));
       final data=snapshot.data!;
       String score(double? v)=>v==null?'—':'${v.toStringAsFixed(1)} / 5';
-      return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),border:Border.all(color:const Color(0xFFECECF4))),
+      return Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(18),border:Border.all(color:Theme.of(context).colorScheme.outlineVariant)),
         child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
           Row(children:[const Icon(Icons.timeline,color:Color(0xFF7938DB),size:26),const SizedBox(width:9),const Expanded(child:Text('Symptom & journal patterns',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:Color(0xFF171B3D))))]),
           const SizedBox(height:10),
@@ -2436,7 +2436,7 @@ class _DocumentCaptureFormState extends State<DocumentCaptureForm> {
       if (_extractedText != null && _extractedText!.isNotEmpty)
         Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: const Color(0xFFF0EAFE), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondaryContainer, borderRadius: BorderRadius.circular(12)),
           child: Row(children: [
             const Icon(Icons.text_snippet_outlined, color: Color(0xFF7938DB)),
             const SizedBox(width: 8),
