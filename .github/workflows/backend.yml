@@ -38,7 +38,7 @@ jobs:
           python -m pip install -e ".[test]" ruff pip-audit
 
       - name: Lint
-        run: ruff check ujexa_api tests
+        run: ruff check ujexa_api tests --select E4,E7,E9,F
 
       - name: Run backend tests
         env:
