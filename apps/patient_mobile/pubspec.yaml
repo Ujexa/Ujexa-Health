@@ -34,7 +34,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: false
-  image_path: assets/ujexa_health_mark.png
+  image_path: assets/ujexa_health_launcher_foreground.png
   adaptive_icon_background: "#F4F0E6"
-  adaptive_icon_foreground: assets/ujexa_health_mark.png
+  adaptive_icon_foreground: assets/ujexa_health_launcher_foreground.png
   min_sdk_android: 23
