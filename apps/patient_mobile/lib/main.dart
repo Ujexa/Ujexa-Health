@@ -14,6 +14,7 @@ import 'domain/document_understanding.dart';
 import 'domain/record_integrity.dart';
 import 'data/notification_center.dart';
 import 'ui/notification_center_page.dart';
+import 'ui/voice_notes_page.dart';
 
 late final PatientRecordRepository patientRecords;
 late final EncryptedDocumentStore encryptedDocuments;
@@ -110,7 +111,7 @@ class _PatientShellState extends State<PatientShell> {
     builder: (_) => AddRecordSheet(onSelect: (label) {
       Navigator.pop(context);
       if (label == 'Voice note') {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const VoiceNotesPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => VoiceNotesPage(records: patientRecords, documents: encryptedDocuments)));
       } else if (label == 'Log checkup') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckupForm()));
       } else if (label == 'Medication log') {
@@ -175,7 +176,7 @@ class _PatientShellState extends State<PatientShell> {
           Padding(padding:const EdgeInsets.only(right:12),child:FutureBuilder<List<PatientRecord>>(future:patientRecords.readAll(),builder:(context,snapshot){
             final profile=snapshot.data?.where((r)=>r.resourceType=='patient_profile').firstOrNull;
             final name=(profile?.payload['preferred_name']??profile?.payload['legal_name']??'').toString().trim();
-            final letter=name.isEmpty?'P':name.characters.first.toUpperCase();
+            final letter=name.isEmpty?'P':name.substring(0, 1).toUpperCase();
             return InkWell(customBorder:const CircleBorder(),onTap:()=>setState(()=>tab=3),child:CircleAvatar(radius:18,backgroundColor:const Color(0xFFE9DDFF),child:Text(letter,style:const TextStyle(color:Color(0xFF4C327D),fontWeight:FontWeight.w900))));
           })),
         ],
@@ -1622,7 +1623,7 @@ class _ClinicalRecordFormState extends State<ClinicalRecordForm> {
     TextFormField(
       controller: controller,
       keyboardType: keyboard,
-      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+      decoration: InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none)),
       validator: required ? (v) => v == null || v.trim().isEmpty ? 'This field is required' : null : null,
     );
 
