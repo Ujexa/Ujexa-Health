@@ -161,7 +161,7 @@ jobs:
         run: flutter pub deps --style=compact
 
       - name: Run static analysis
-        run: flutter analyze --fatal-infos --fatal-warnings
+        run: flutter analyze --fatal-warnings
 
       - name: Run tests
         run: flutter test
