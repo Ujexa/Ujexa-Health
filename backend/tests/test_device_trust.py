@@ -34,7 +34,7 @@ def override_identity():
     claims = {"sub":"patient-test-001","jti":identity_state["token_id"],"amr":["mfa"]}
     if identity_state["device_id"]:
         claims["device_id"] = identity_state["device_id"]
-    return Identity(subject="patient-test-001", token_id="session-test-001", claims=claims)
+    return Identity(subject="patient-test-001", token_id=identity_state["token_id"], claims=claims)
 
 app.dependency_overrides[get_db] = override_db
 app.dependency_overrides[get_current_identity] = override_identity
