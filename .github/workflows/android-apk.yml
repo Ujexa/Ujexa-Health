@@ -61,7 +61,7 @@ jobs:
                       raise SystemExit("Could not find compileOptions in build.gradle.kts")
                   source = source.replace(
                       compile_block,
-                      compile_block + "\\n        isCoreLibraryDesugaringEnabled = true",
+                      compile_block + "\n        isCoreLibraryDesugaringEnabled = true",
                       1,
                   )
               if "desugar_jdk_libs" not in source:
@@ -69,7 +69,7 @@ jobs:
                       raise SystemExit("Could not find dependencies in build.gradle.kts")
                   source = source.replace(
                       dependency_block,
-                      dependency_block + '\\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',
+                      dependency_block + '\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',
                       1,
                   )
           elif groovy.exists():
@@ -81,7 +81,7 @@ jobs:
                       raise SystemExit("Could not find compileOptions in build.gradle")
                   source = source.replace(
                       marker,
-                      marker + "\\n        coreLibraryDesugaringEnabled true",
+                      marker + "\n        coreLibraryDesugaringEnabled true",
                       1,
                   )
               if "desugar_jdk_libs" not in source:
@@ -90,7 +90,7 @@ jobs:
                       raise SystemExit("Could not find dependencies in build.gradle")
                   source = source.replace(
                       marker,
-                      marker + "\\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'",
+                      marker + "\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'",
                       1,
                   )
           else:
