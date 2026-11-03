@@ -55,7 +55,7 @@ jobs:
           if gradle_kts.is_file():
               gradle_file = gradle_kts
               source = gradle_file.read_text()
-              compile_pattern = r"(?m)^\\s*compileOptions\\s*\\{"
+              compile_pattern = r"(?m)^\s*compileOptions\s*\{"
               flag = "isCoreLibraryDesugaringEnabled = true"
               required = [
                   'coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',
@@ -67,7 +67,7 @@ jobs:
           elif gradle_groovy.is_file():
               gradle_file = gradle_groovy
               source = gradle_file.read_text()
-              compile_pattern = r"(?m)^\\s*compileOptions\\s*\\{"
+              compile_pattern = r"(?m)^\s*compileOptions\s*\{"
               flag = "coreLibraryDesugaringEnabled true"
               required = [
                   "coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'",
@@ -84,9 +84,9 @@ jobs:
               raise SystemExit(f"Missing compileOptions block in {gradle_file}")
           if flag not in source:
               insert_at = compile_options.end()
-              source = source[:insert_at] + "\\n        " + flag + source[insert_at:]
+              source = source[:insert_at] + "\n        " + flag + source[insert_at:]
 
-          dependencies = re.search(r"(?m)^dependencies\\s*\\{", source)
+          dependencies = re.search(r"(?m)^dependencies\s*\{", source)
           if dependencies:
               opening = source.find("{", dependencies.start())
               depth = 0
@@ -104,9 +104,9 @@ jobs:
               block = source[opening + 1:closing]
               additions = [line for line in required if line not in block]
               if additions:
-                  source = source[:closing] + "\\n    " + "\\n    ".join(additions) + "\\n" + source[closing:]
+                  source = source[:closing] + "\n    " + "\n    ".join(additions) + "\n" + source[closing:]
           else:
-              source = source.rstrip() + "\\n\\ndependencies {\\n    " + "\\n    ".join(required) + "\\n}\\n"
+              source = source.rstrip() + "\n\ndependencies {\n    " + "\n    ".join(required) + "\n}\n"
 
           for dependency in required:
               if dependency not in source:
