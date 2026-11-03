@@ -33,19 +33,35 @@ Future<void> main() async {
   runApp(const UjexaHealthApp());
 }
 
+final ValueNotifier<ThemeMode> ujexaThemeMode = ValueNotifier(ThemeMode.light);
 class UjexaHealthApp extends StatelessWidget {
   const UjexaHealthApp({super.key});
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'Ujexa Health',
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: const Color(0xFFF8F8FD),
-      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF7938DB)),
-      fontFamily: 'Roboto',
+  ThemeData _theme(Brightness brightness) {
+    final dark = brightness == Brightness.dark;
+    final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF8C67D9), brightness: brightness, surface: dark ? const Color(0xFF171923) : Colors.white);
+    final fill = dark ? const Color(0xFF252936) : const Color(0xFFF0EDFA);
+    final border = dark ? const Color(0xFF3A4050) : const Color(0xFFE4DDF2);
+    return ThemeData(
+      useMaterial3: true, brightness: brightness, colorScheme: scheme,
+      scaffoldBackgroundColor: dark ? const Color(0xFF10131B) : const Color(0xFFF7F5FB), fontFamily: 'Roboto',
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true, fillColor: fill, contentPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 17),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide(color: border)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: const BorderSide(color: Color(0xFF9872E8), width: 1.8)),
+        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: const BorderSide(color: Color(0xFFD65C67))),
+      ),
+      cardTheme: CardThemeData(color: dark ? const Color(0xFF1B202B) : Colors.white, elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: BorderSide(color: border))),
+      navigationBarTheme: NavigationBarThemeData(backgroundColor: dark ? const Color(0xFF171B25) : Colors.white, indicatorColor: dark ? const Color(0xFF423365) : const Color(0xFFECE3FF)),
+    );
+  }
+  @override Widget build(BuildContext context) => ValueListenableBuilder<ThemeMode>(
+    valueListenable: ujexaThemeMode,
+    builder: (context, mode, _) => MaterialApp(
+      title: 'Ujexa Health', debugShowCheckedModeBanner: false,
+      theme: _theme(Brightness.light), darkTheme: _theme(Brightness.dark), themeMode: mode,
+      home: const UjexaStartupGate(),
     ),
-    home: const UjexaStartupGate(),
   );
 }
 
@@ -84,24 +100,22 @@ class _UjexaStartupGateState extends State<UjexaStartupGate> with SingleTickerPr
 
 class PatientShell extends StatefulWidget {
   const PatientShell({super.key});
-  @override
-  State<PatientShell> createState() => _PatientShellState();
+  @override State<PatientShell> createState() => _PatientShellState();
 }
-
 class _PatientShellState extends State<PatientShell> {
   int tab = 0;
-  static const ink = Color(0xFF171B3D);
   static const purple = Color(0xFF7938DB);
-
   void openAdd() => showModalBottomSheet<void>(
     context: context, isScrollControlled: true, backgroundColor: Colors.transparent,
     builder: (_) => AddRecordSheet(onSelect: (label) {
       Navigator.pop(context);
-      if (label == 'Log checkup') {
+      if (label == 'Voice note') {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const VoiceNotesPage()));
+      } else if (label == 'Log checkup') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckupForm()));
       } else if (label == 'Medication log') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const MedicationManagementPage()));
-      } else if (['Vitals', 'Medication', 'Allergies', 'Conditions'].contains(label)) {
+      } else if (['Vitals','Medication','Allergies','Conditions'].contains(label)) {
         Navigator.push(context, MaterialPageRoute(builder: (_) => ClinicalRecordForm(kind: label)));
       } else if (label == 'Manage sharing consent') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const SharingConsentPage()));
@@ -122,45 +136,65 @@ class _PatientShellState extends State<PatientShell> {
       } else if (label == 'Journal') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const HealthJournalForm()));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$label will be available in a later capture module.')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$label is not available yet.')));
       }
     }),
   );
-
-  @override
-  Widget build(BuildContext context) {
-    final pages = [
-      DashboardPage(onAdd: openAdd),
-      RecordsPage(onAdd: openAdd),
-      const HealthInsightsPage(),
-      const PatientProfilePage(),
-      const NotificationCenterPage(),
-    ];
+  Widget _drawerItem(IconData icon, String label, int index) => ListTile(
+    leading: Icon(icon, color: tab == index ? purple : null), title: Text(label, style: TextStyle(fontWeight: tab == index ? FontWeight.w800 : FontWeight.w500)),
+    selected: tab == index, selectedTileColor: purple.withOpacity(.10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    onTap: () { setState(() => tab = index); Navigator.pop(context); },
+  );
+  @override Widget build(BuildContext context) {
+    final pages = [DashboardPage(onAdd: openAdd), RecordsPage(onAdd: openAdd), const HealthInsightsPage(), const PatientProfilePage(), const NotificationCenterPage()];
     return Scaffold(
-      body: SafeArea(child: IndexedStack(index: tab, children: pages)),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: tab,
-        onDestinationSelected: (value) => setState(() => tab = value),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.folder_open_outlined), label: 'Records'),
-          NavigationDestination(icon: Icon(Icons.insights_outlined), label: 'Insights'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
-          NavigationDestination(icon: Icon(Icons.notifications_none), selectedIcon: Icon(Icons.notifications_active), label: 'Alerts'),
+      drawer: Drawer(child: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Padding(padding: const EdgeInsets.fromLTRB(20,24,20,20), child: Row(children: [
+          Image.asset('assets/ujexa_health_mark.png', width: 48, height: 48), const SizedBox(width: 12),
+          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Ujexa Health', style: TextStyle(fontSize: 19,fontWeight: FontWeight.w900)), Text('Your health, in your hands', style: TextStyle(fontSize: 11,color: Color(0xFF89839B)))])),
+        ])),
+        const Divider(height: 1),
+        Padding(padding: const EdgeInsets.fromLTRB(18,18,18,8), child: Text('YOUR SPACE', style: TextStyle(fontSize: 10,letterSpacing: 1.5,fontWeight: FontWeight.w900,color: Theme.of(context).colorScheme.primary))),
+        _drawerItem(Icons.home_rounded,'Home',0), _drawerItem(Icons.folder_copy_rounded,'Health records',1),
+        _drawerItem(Icons.insights_rounded,'Insights',2), _drawerItem(Icons.person_rounded,'My profile',3), _drawerItem(Icons.notifications_active_rounded,'Notifications',4),
+        const Divider(height: 24),
+        ListTile(leading: const Icon(Icons.mic_rounded),title: const Text('Voice notes'),onTap:(){Navigator.pop(context);Navigator.push(context,MaterialPageRoute(builder:(_)=>const VoiceNotesPage()));}),
+        ListTile(leading: const Icon(Icons.emergency_rounded),title: const Text('Emergency summary'),onTap:(){Navigator.pop(context);Navigator.push(context,MaterialPageRoute(builder:(_)=>const EmergencySummaryPage()));}),
+        const Spacer(),
+        ValueListenableBuilder<ThemeMode>(valueListenable:ujexaThemeMode,builder:(context,mode,_)=>SwitchListTile(
+          secondary:Icon(mode==ThemeMode.dark?Icons.dark_mode_rounded:Icons.light_mode_rounded),title:const Text('Dark appearance'),
+          value:mode==ThemeMode.dark,onChanged:(v)=>ujexaThemeMode.value=v?ThemeMode.dark:ThemeMode.light)),
+        const Padding(padding:EdgeInsets.all(18),child:Text('Private by design · Stored on this device',style:TextStyle(fontSize:11,color:Color(0xFF89839B)))),
+      ]))),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor, surfaceTintColor: Colors.transparent,
+        leading: Builder(builder:(context)=>IconButton(tooltip:'Open navigation',icon:const Icon(Icons.menu_rounded),onPressed:()=>Scaffold.of(context).openDrawer())),
+        title: const Text('UJEXA',style:TextStyle(fontWeight:FontWeight.w900,letterSpacing:2,fontSize:14)),
+        actions:[
+          IconButton(tooltip:'Notifications',onPressed:()=>setState(()=>tab=4),icon:const Icon(Icons.notifications_none_rounded)),
+          Padding(padding:const EdgeInsets.only(right:12),child:FutureBuilder<List<PatientRecord>>(future:patientRecords.readAll(),builder:(context,snapshot){
+            final profile=snapshot.data?.where((r)=>r.resourceType=='patient_profile').firstOrNull;
+            final name=(profile?.payload['preferred_name']??profile?.payload['legal_name']??'').toString().trim();
+            final letter=name.isEmpty?'P':name.characters.first.toUpperCase();
+            return InkWell(customBorder:const CircleBorder(),onTap:()=>setState(()=>tab=3),child:CircleAvatar(radius:18,backgroundColor:const Color(0xFFE9DDFF),child:Text(letter,style:const TextStyle(color:Color(0xFF4C327D),fontWeight:FontWeight.w900))));
+          })),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: openAdd, backgroundColor: purple, foregroundColor: Colors.white,
-        child: const Icon(Icons.add, size: 30),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: SafeArea(child: AnimatedSwitcher(duration:const Duration(milliseconds:320),reverseDuration:const Duration(milliseconds:220),
+        transitionBuilder:(child,animation)=>FadeTransition(opacity:animation,child:SlideTransition(position:Tween<Offset>(begin:const Offset(.025,.015),end:Offset.zero).animate(CurvedAnimation(parent:animation,curve:Curves.easeOutCubic)),child:child)),
+        child:KeyedSubtree(key:ValueKey(tab),child:pages[tab]))),
+      bottomNavigationBar: NavigationBar(selectedIndex:tab,onDestinationSelected:(v)=>setState(()=>tab=v),destinations:const [
+        NavigationDestination(icon:Icon(Icons.home_outlined),selectedIcon:Icon(Icons.home_rounded),label:'Home'),
+        NavigationDestination(icon:Icon(Icons.folder_open_outlined),selectedIcon:Icon(Icons.folder_rounded),label:'Records'),
+        NavigationDestination(icon:Icon(Icons.insights_outlined),selectedIcon:Icon(Icons.insights_rounded),label:'Insights'),
+        NavigationDestination(icon:Icon(Icons.person_outline),selectedIcon:Icon(Icons.person_rounded),label:'Profile'),
+        NavigationDestination(icon:Icon(Icons.notifications_none),selectedIcon:Icon(Icons.notifications_active),label:'Alerts'),
+      ]),
+      floatingActionButton:FloatingActionButton.extended(onPressed:openAdd,backgroundColor:purple,foregroundColor:Colors.white,elevation:5,icon:const Icon(Icons.add_rounded),label:const Text('Add entry',style:TextStyle(fontWeight:FontWeight.w800))),
+      floatingActionButtonLocation:FloatingActionButtonLocation.endFloat,
     );
   }
 }
-
-
 
 class RecordsPage extends StatefulWidget {
   const RecordsPage({super.key, required this.onAdd});
@@ -530,7 +564,7 @@ class DashboardPage extends StatelessWidget {
         const Text('Ujexa Health', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: ink)),
         const Spacer(),
         IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationCenterPage())), icon: const Icon(Icons.notifications_none)),
-        const CircleAvatar(backgroundColor: Color(0xFFE9DDFF), child: Text('K', style: TextStyle(color: ink))),
+        InkWell(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PatientProfilePage())), customBorder: const CircleBorder(), child: const CircleAvatar(backgroundColor: Color(0xFFE9DDFF), child: Text('P', style: TextStyle(color: ink)))),
       ]),
       const SizedBox(height: 20),
       const Text('Your health, in one place', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: ink)),
