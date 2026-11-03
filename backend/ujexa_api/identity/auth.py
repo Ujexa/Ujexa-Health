@@ -1,12 +1,16 @@
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any
+
 import jwt
 from jwt import PyJWKClient
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
 from ..config import get_settings
 
 bearer = HTTPBearer(auto_error=True)
+
 
 @dataclass(frozen=True)
 class Identity:
@@ -14,11 +18,18 @@ class Identity:
     token_id: str
     claims: dict[str, Any]
 
+
+@lru_cache(maxsize=8)
+def _jwks_client(url: str) -> PyJWKClient:
+    # Keep PyJWT's signing-key cache across requests instead of rebuilding the
+    # client (and refetching the JWKS) for every authenticated API call.
+    return PyJWKClient(url, cache_keys=True)
+
+
 def verify_access_token(token: str) -> Identity:
     settings = get_settings()
     try:
-        key_client = PyJWKClient(settings.oidc_jwks_url, cache_keys=True)
-        signing_key = key_client.get_signing_key_from_jwt(token)
+        signing_key = _jwks_client(settings.oidc_jwks_url).get_signing_key_from_jwt(token)
         claims = jwt.decode(
             token,
             signing_key.key,
@@ -45,6 +56,7 @@ def verify_access_token(token: str) -> Identity:
             raise HTTPException(status_code=403, detail="Multi-factor authentication is required")
 
     return Identity(subject=subject, token_id=token_id, claims=claims)
+
 
 def get_current_identity(credentials: HTTPAuthorizationCredentials = Depends(bearer)) -> Identity:
     return verify_access_token(credentials.credentials)
