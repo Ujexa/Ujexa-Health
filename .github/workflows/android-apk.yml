@@ -134,7 +134,7 @@ jobs:
               marker = '<application'
               if marker not in source:
                   raise SystemExit("Android manifest has no application element")
-              source = source.replace(marker, permission + "\\n    " + marker, 1)
+              source = source.replace(marker, permission + "\n    " + marker, 1)
               manifest.write_text(source)
           print("Microphone permission is configured for voice notes")
           PY
