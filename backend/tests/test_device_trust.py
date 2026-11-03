@@ -1,6 +1,9 @@
 import base64
+import os
 from datetime import datetime, timezone
 from uuid import uuid4
+
+os.environ.setdefault("UJEXA_ENV", "development")
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
@@ -67,11 +70,15 @@ def test_device_enrollment_requires_signed_one_time_challenge():
     })
     assert replay.status_code == 400
 
+    # The first device can be enrolled without a device_id claim. Ordinary
+    # device-management routes become available after the IdP issues that claim.
+    listed_without_claim = client.get("/v1/identity/devices")
+    assert listed_without_claim.status_code == 401
+    identity_state["device_id"] = device_id
     listed = client.get("/v1/identity/devices")
     assert listed.status_code == 200
     assert any(d["id"] == device_id for d in listed.json())
 
-    identity_state["device_id"] = device_id
     db = TestingSession()
     envelope = VaultKeyEnvelope(
         id=str(uuid4()), subject="patient-test-001", vault_id=str(uuid4()),
@@ -92,7 +99,7 @@ def test_device_enrollment_requires_signed_one_time_challenge():
     assert db.get(VaultKeyEnvelope, envelope_id).revoked_at is not None
     db.close()
     identity_state["device_id"] = None
-    assert all(d["id"] != device_id for d in client.get("/v1/identity/devices").json())
+    assert client.get("/v1/identity/devices").status_code == 401
 
 def test_invalid_device_proof_is_rejected():
     private = Ed25519PrivateKey.generate()
@@ -112,3 +119,17 @@ def test_session_revocation_blocks_future_protected_requests():
     assert response.json()["revoked_id"] == "session-test-001"
     blocked = client.get("/v1/identity/devices")
     assert blocked.status_code == 401
+
+
+def test_first_device_bootstrap_is_allowed_in_production(monkeypatch):
+    from types import SimpleNamespace
+    from ujexa_api.identity import dependencies
+
+    monkeypatch.setattr(dependencies, "get_settings", lambda: SimpleNamespace(env="production"))
+    identity_state["device_id"] = None
+
+    challenge = client.post("/v1/identity/device-challenges")
+    assert challenge.status_code == 200
+    # Bootstrap is intentionally narrow: the regular trusted-device endpoint
+    # still rejects a session without a device claim in production.
+    assert client.get("/v1/identity/devices").status_code == 401
