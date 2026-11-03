@@ -186,7 +186,7 @@ class _PatientShellState extends State<PatientShell> {
             final profile=profiles.isEmpty?null:profiles.first;
             final name=(profile?.payload['preferred_name']??profile?.payload['legal_name']??'').toString().trim();
             final letter=name.isEmpty?'P':name.substring(0, 1).toUpperCase();
-            return InkWell(customBorder:const CircleBorder(),onTap:()=>setState(()=>tab=3),child:CircleAvatar(radius:18,backgroundColor:const Color(0xFFE9DDFF),child:Text(letter,style:const TextStyle(color:Color(0xFF4C327D),fontWeight:FontWeight.w900))));
+            return InkWell(customBorder:const CircleBorder(),onTap:()=>setState(()=>tab=3),child:CircleAvatar(radius:18,backgroundColor:const Color(0xFFE9DDFF),child:Text(letter,style:TextStyle(color:Color(0xFF4C327D),fontWeight:FontWeight.w900))));
           })),
         ],
       ),
@@ -214,8 +214,8 @@ class RecordsPage extends StatefulWidget {
 }
 
 class _RecordsPageState extends State<RecordsPage> {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).colorScheme.onSurface;
+  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
   late Future<List<PatientRecord>> _future;
   final _search = TextEditingController();
   String _category = 'all';
@@ -567,8 +567,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF77758D);
+  Color get ink => Theme.of(context).colorScheme.onSurface;
+  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
   static const _facts = <String>[
     'Your heart beats around 100,000 times in a typical day.',
     'Water helps regulate body temperature and transport nutrients.',
@@ -689,8 +689,8 @@ class HealthInsightsPage extends StatefulWidget {
 }
 
 class _HealthInsightsPageState extends State<HealthInsightsPage> {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).colorScheme.onSurface;
+  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
   late Future<_Stage15InsightBundle> _future;
 
   @override
@@ -1821,8 +1821,8 @@ class MedicationManagementPage extends StatefulWidget {
 }
 
 class _MedicationManagementPageState extends State<MedicationManagementPage> {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).colorScheme.onSurface;
+  Color get muted => Theme.of(context).colorScheme.onSurfaceVariant;
   late Future<List<PatientRecord>> _future;
   @override
   void initState() { super.initState(); _future = _loadAndReconcileSchedules(); }
