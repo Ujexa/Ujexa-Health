@@ -55,49 +55,67 @@ jobs:
           if gradle_kts.is_file():
               gradle_file = gradle_kts
               source = gradle_file.read_text()
-              compile_options = re.search(r"(?m)^\s*compileOptions\s*\{", source)
-              if not compile_options:
-                  raise SystemExit(f"Missing compileOptions block in {gradle_file}")
-
-              if "isCoreLibraryDesugaringEnabled" not in source:
-                  insert_at = compile_options.end()
-                  source = source[:insert_at] + "\n        isCoreLibraryDesugaringEnabled = true" + source[insert_at:]
-
-              if "desugar_jdk_libs" not in source:
-                  source = source.rstrip() + (
-                      '\n\ndependencies {\n'
-                      '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n'
-                      '}\n'
-                  )
-
+              compile_pattern = r"(?m)^\\s*compileOptions\\s*\\{"
+              flag = "isCoreLibraryDesugaringEnabled = true"
+              required = [
+                  'coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")',
+                  'implementation("com.google.mlkit:text-recognition-chinese:16.0.1")',
+                  'implementation("com.google.mlkit:text-recognition-devanagari:16.0.1")',
+                  'implementation("com.google.mlkit:text-recognition-japanese:16.0.1")',
+                  'implementation("com.google.mlkit:text-recognition-korean:16.0.1")',
+              ]
           elif gradle_groovy.is_file():
               gradle_file = gradle_groovy
               source = gradle_file.read_text()
-              compile_options = re.search(r"(?m)^\s*compileOptions\s*\{", source)
-              if not compile_options:
-                  raise SystemExit(f"Missing compileOptions block in {gradle_file}")
-
-              if "coreLibraryDesugaringEnabled" not in source:
-                  insert_at = compile_options.end()
-                  source = source[:insert_at] + "\n        coreLibraryDesugaringEnabled true" + source[insert_at:]
-
-              if "desugar_jdk_libs" not in source:
-                  source = source.rstrip() + (
-                      "\n\ndependencies {\n"
-                      "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n"
-                      "}\n"
-                  )
+              compile_pattern = r"(?m)^\\s*compileOptions\\s*\\{"
+              flag = "coreLibraryDesugaringEnabled true"
+              required = [
+                  "coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'",
+                  "implementation 'com.google.mlkit:text-recognition-chinese:16.0.1'",
+                  "implementation 'com.google.mlkit:text-recognition-devanagari:16.0.1'",
+                  "implementation 'com.google.mlkit:text-recognition-japanese:16.0.1'",
+                  "implementation 'com.google.mlkit:text-recognition-korean:16.0.1'",
+              ]
           else:
               raise SystemExit("Flutter did not generate android/app/build.gradle(.kts)")
 
-          if "desugar_jdk_libs:2.1.4" not in source:
-              raise SystemExit("Desugaring dependency was not configured")
-          if not ("isCoreLibraryDesugaringEnabled = true" in source or
-                  "coreLibraryDesugaringEnabled true" in source):
+          compile_options = re.search(compile_pattern, source)
+          if not compile_options:
+              raise SystemExit(f"Missing compileOptions block in {gradle_file}")
+          if flag not in source:
+              insert_at = compile_options.end()
+              source = source[:insert_at] + "\\n        " + flag + source[insert_at:]
+
+          dependencies = re.search(r"(?m)^dependencies\\s*\\{", source)
+          if dependencies:
+              opening = source.find("{", dependencies.start())
+              depth = 0
+              closing = None
+              for index in range(opening, len(source)):
+                  if source[index] == "{":
+                      depth += 1
+                  elif source[index] == "}":
+                      depth -= 1
+                      if depth == 0:
+                          closing = index
+                          break
+              if closing is None:
+                  raise SystemExit("Unclosed dependencies block in generated Gradle file")
+              block = source[opening + 1:closing]
+              additions = [line for line in required if line not in block]
+              if additions:
+                  source = source[:closing] + "\\n    " + "\\n    ".join(additions) + "\\n" + source[closing:]
+          else:
+              source = source.rstrip() + "\\n\\ndependencies {\\n    " + "\\n    ".join(required) + "\\n}\\n"
+
+          for dependency in required:
+              if dependency not in source:
+                  raise SystemExit(f"Required Android dependency missing: {dependency}")
+          if flag not in source:
               raise SystemExit("Core library desugaring flag was not configured")
 
           gradle_file.write_text(source)
-          print(f"Configured core library desugaring in {gradle_file}")
+          print(f"Configured Android release dependencies in {gradle_file}")
           print("--- Android app Gradle configuration ---")
           print(source)
           PY
