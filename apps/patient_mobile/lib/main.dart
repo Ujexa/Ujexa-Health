@@ -129,7 +129,7 @@ class _PatientShellState extends State<PatientShell> {
       } else if (['Appointment','Lifestyle entry','Preventive care','Share health records'].contains(label)) {
         Navigator.push(context, MaterialPageRoute(builder: (_) => StageCaptureForm(kind: label)));
       } else if (['Meal','Activity','Sleep'].contains(label)) {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => StageCaptureForm(kind: 'Lifestyle entry')));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => StageCaptureForm(kind: label)));
       } else if (label == 'Review document extractions') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentPromotionWorkspace()));
       } else if (label == 'Medical document') {
@@ -1102,13 +1102,14 @@ class StageCaptureForm extends StatefulWidget {
 }
 class _StageCaptureFormState extends State<StageCaptureForm>{
   final a=TextEditingController(),b=TextEditingController(),c=TextEditingController();
-  DateTime date=DateTime.now();String category='nutrition',status='unknown';final Set<String> selected={'medications','allergies','conditions'};
+  DateTime date=DateTime.now();late String category;String status='unknown';final Set<String> selected={'medications','allergies','conditions'};
   bool saving=false;
+  @override void initState(){super.initState();category=switch(widget.kind){'Activity'=>'activity','Sleep'=>'sleep',_=>'nutrition'};}
   @override void dispose(){a.dispose();b.dispose();c.dispose();super.dispose();}
   Future<void> save()async{
     setState(()=>saving=true);
     try{
-      final type=switch(widget.kind){'Appointment'=>'appointment','Lifestyle entry'=>'lifestyle_entry','Preventive care'=>'preventive_care',_=>'sharing_consent'};
+      final type=switch(widget.kind){'Appointment'=>'appointment','Lifestyle entry' || 'Meal' || 'Activity' || 'Sleep'=>'lifestyle_entry','Preventive care'=>'preventive_care',_=>'sharing_consent'};
       final fields=switch(type){
         'appointment'=>{'title':a.text.trim(),'appointment_at':date.toUtc().toIso8601String(),'provider_name':b.text.trim(),'location':c.text.trim(),'status':'planned'},
         'lifestyle_entry'=>{'category':category,'occurred_at':date.toUtc().toIso8601String(),'summary':a.text.trim(),'numeric_value':double.tryParse(b.text.trim()),'unit':c.text.trim()},
