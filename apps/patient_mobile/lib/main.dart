@@ -161,7 +161,7 @@ class _PatientShellState extends State<PatientShell> {
         _drawerItem(Icons.home_rounded,'Home',0), _drawerItem(Icons.folder_copy_rounded,'Health records',1),
         _drawerItem(Icons.insights_rounded,'Insights',2), _drawerItem(Icons.person_rounded,'My profile',3), _drawerItem(Icons.notifications_active_rounded,'Notifications',4),
         const Divider(height: 24),
-        ListTile(leading: const Icon(Icons.mic_rounded),title: const Text('Voice notes'),onTap:(){Navigator.pop(context);Navigator.push(context,MaterialPageRoute(builder:(_)=>const VoiceNotesPage()));}),
+        ListTile(leading: const Icon(Icons.mic_rounded),title: const Text('Voice notes'),onTap:(){Navigator.pop(context);Navigator.push(context,MaterialPageRoute(builder:(_)=>VoiceNotesPage(records: patientRecords, documents: encryptedDocuments)));}),
         ListTile(leading: const Icon(Icons.emergency_rounded),title: const Text('Emergency summary'),onTap:(){Navigator.pop(context);Navigator.push(context,MaterialPageRoute(builder:(_)=>const EmergencySummaryPage()));}),
         const Spacer(),
         ValueListenableBuilder<ThemeMode>(valueListenable:ujexaThemeMode,builder:(context,mode,_)=>SwitchListTile(
