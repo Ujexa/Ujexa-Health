@@ -173,7 +173,12 @@ class _PatientShellState extends State<PatientShell> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor, surfaceTintColor: Colors.transparent,
         leading: Builder(builder:(context)=>IconButton(tooltip:'Open navigation',icon:const Icon(Icons.menu_rounded),onPressed:()=>Scaffold.of(context).openDrawer())),
-        title: const Text('UJEXA',style:TextStyle(fontWeight:FontWeight.w900,letterSpacing:2,fontSize:14)),
+        title: Row(mainAxisSize:MainAxisSize.min,children:[
+          Container(width:32,height:32,decoration:const BoxDecoration(color:Colors.white,shape:BoxShape.circle),
+            child:ClipOval(child:Image.asset('assets/ujexa_health_mark.png',fit:BoxFit.cover))),
+          const SizedBox(width:8),
+          const Text('Ujexa Health',style:TextStyle(fontWeight:FontWeight.w900,fontSize:16,letterSpacing:-.3)),
+        ]),
         actions:[
           IconButton(tooltip:'Notifications',onPressed:()=>setState(()=>tab=4),icon:const Icon(Icons.notifications_none_rounded)),
           Padding(padding:const EdgeInsets.only(right:12),child:FutureBuilder<List<PatientRecord>>(future:patientRecords.readAll(),builder:(context,snapshot){
@@ -615,18 +620,18 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     final dark = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).colorScheme.onSurface;
     return ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 110), children: [
-      Row(children: [
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('YOUR HEALTH SPACE', style: TextStyle(color: muted, fontSize: 10, letterSpacing: 1.8, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 5),
-          Text('A healthier you,\none step at a time.', style: TextStyle(fontSize: 25, height: 1.13, fontWeight: FontWeight.w900, letterSpacing: -.5, color: textColor)),
-        ])),
-        AnimatedBuilder(animation: _motion, builder: (context, child) => Transform.translate(offset: Offset(0, -3 * _motion.value), child: child),
-          child: Container(width: 66, height: 66, padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFECE3FF),
-              boxShadow: [BoxShadow(color: const Color(0xFF7938DB).withValues(alpha: .13), blurRadius: 18, spreadRadius: 2)]),
-            child: Image.asset('assets/ujexa_health_mark.png', fit: BoxFit.contain))),
-      ]),
+      Container(
+        padding: const EdgeInsets.fromLTRB(2, 4, 2, 2),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Row(children:[
+            Icon(Icons.lightbulb_outline_rounded,color:Color(0xFF9B6BE8),size:17),
+            SizedBox(width:7),
+            Text('DID YOU KNOW?',style:TextStyle(color:Color(0xFF9B6BE8),fontSize:10,letterSpacing:1.8,fontWeight:FontWeight.w900)),
+          ]),
+          const SizedBox(height:9),
+          Text(_fact,style:TextStyle(fontSize:21,height:1.22,fontWeight:FontWeight.w800,letterSpacing:-.35,color:textColor)),
+        ]),
+      ),
       const SizedBox(height: 22),
       FutureBuilder<List<PatientRecord>>(future: _records, builder: (context, snapshot) {
         final count = snapshot.data?.length;
@@ -663,23 +668,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
         _action(icon: Icons.medical_services_rounded, label: 'Log checkup', tint: const Color(0xFFFFF0E7), accent: const Color(0xFFD77B39), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckupForm())), index: 3),
       ]),
       const SizedBox(height: 20),
-      AnimatedBuilder(animation: _motion, builder: (context, child) => Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(color: dark ? const Color(0xFF242034) : const Color(0xFFF0ECFA), borderRadius: BorderRadius.circular(23),
-          border: Border.all(color: const Color(0xFF9C79DF).withValues(alpha: .18 + .12 * _motion.value))),
-        child: child),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(width: 38, height: 38, decoration: BoxDecoration(color: const Color(0xFF7938DB).withValues(alpha: .12), borderRadius: BorderRadius.circular(13)),
-            child: const Icon(Icons.lightbulb_rounded, color: Color(0xFF7938DB), size: 22)),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('DID YOU KNOW?', style: TextStyle(color: Color(0xFF7938DB), fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 7),
-            Text(_fact, style: TextStyle(color: textColor, fontSize: 14, height: 1.4, fontWeight: FontWeight.w600)),
-          ])),
-        ])),
       const SizedBox(height: 14),
-      Center(child: Text('Your records. Your choices. Your health.', style: TextStyle(color: muted, fontSize: 11))),
     ]);
   }
 
