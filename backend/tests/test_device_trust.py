@@ -28,10 +28,10 @@ def override_db():
     finally:
         db.close()
 
-identity_state = {"device_id": None}
+identity_state = {"device_id": None, "token_id": "session-test-001"}
 
 def override_identity():
-    claims = {"sub":"patient-test-001","jti":"session-test-001","amr":["mfa"]}
+    claims = {"sub":"patient-test-001","jti":identity_state["token_id"],"amr":["mfa"]}
     if identity_state["device_id"]:
         claims["device_id"] = identity_state["device_id"]
     return Identity(subject="patient-test-001", token_id="session-test-001", claims=claims)
@@ -43,7 +43,10 @@ client = TestClient(app)
 def enc(raw: bytes) -> str:
     return base64.urlsafe_b64encode(raw).decode().rstrip("=")
 
-def test_device_enrollment_requires_signed_one_time_challenge():
+def test_device_enrollment_requires_signed_one_time_challenge(monkeypatch):
+    from types import SimpleNamespace
+    from ujexa_api.identity import dependencies
+    monkeypatch.setattr(dependencies, "get_settings", lambda: SimpleNamespace(env="production"))
     private = Ed25519PrivateKey.generate()
     public = private.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
     challenge = client.post("/v1/identity/device-challenges").json()
@@ -94,10 +97,12 @@ def test_device_enrollment_requires_signed_one_time_challenge():
     assert revoked.status_code == 200
     assert revoked.json()["status"] == "revoked"
     assert client.get("/v1/identity/devices").status_code == 401
+    identity_state["token_id"] = "session-test-001"
     db = TestingSession()
     assert db.get(VaultKeyEnvelope, envelope_id).revoked_at is not None
     db.close()
     identity_state["device_id"] = None
+    identity_state["token_id"] = "session-test-001"
     assert client.get("/v1/identity/devices").status_code == 401
 
 def test_invalid_device_proof_is_rejected():
@@ -126,6 +131,7 @@ def test_first_device_bootstrap_is_allowed_in_production(monkeypatch):
 
     monkeypatch.setattr(dependencies, "get_settings", lambda: SimpleNamespace(env="production"))
     identity_state["device_id"] = None
+    identity_state["token_id"] = "session-bootstrap-test"
 
     challenge = client.post("/v1/identity/device-challenges")
     assert challenge.status_code == 200
