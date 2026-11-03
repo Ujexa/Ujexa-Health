@@ -150,6 +150,9 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
+      - name: Generate branded Android launcher icons
+        run: dart run flutter_launcher_icons
+
       - name: Record resolved dependency graph
         run: flutter pub deps --style=compact
 
