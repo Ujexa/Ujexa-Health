@@ -128,6 +128,8 @@ class _PatientShellState extends State<PatientShell> {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const EmergencySummaryPage()));
       } else if (['Appointment','Lifestyle entry','Preventive care','Share health records'].contains(label)) {
         Navigator.push(context, MaterialPageRoute(builder: (_) => StageCaptureForm(kind: label)));
+      } else if (['Meal','Activity','Sleep'].contains(label)) {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => StageCaptureForm(kind: 'Lifestyle entry')));
       } else if (label == 'Review document extractions') {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentPromotionWorkspace()));
       } else if (label == 'Medical document') {
@@ -174,7 +176,8 @@ class _PatientShellState extends State<PatientShell> {
         actions:[
           IconButton(tooltip:'Notifications',onPressed:()=>setState(()=>tab=4),icon:const Icon(Icons.notifications_none_rounded)),
           Padding(padding:const EdgeInsets.only(right:12),child:FutureBuilder<List<PatientRecord>>(future:patientRecords.readAll(),builder:(context,snapshot){
-            final profile=snapshot.data?.where((r)=>r.resourceType=='patient_profile').firstOrNull;
+            final profiles=snapshot.data?.where((r)=>r.resourceType=='patient_profile').toList()??<PatientRecord>[];
+            final profile=profiles.isEmpty?null:profiles.first;
             final name=(profile?.payload['preferred_name']??profile?.payload['legal_name']??'').toString().trim();
             final letter=name.isEmpty?'P':name.substring(0, 1).toUpperCase();
             return InkWell(customBorder:const CircleBorder(),onTap:()=>setState(()=>tab=3),child:CircleAvatar(radius:18,backgroundColor:const Color(0xFFE9DDFF),child:Text(letter,style:const TextStyle(color:Color(0xFF4C327D),fontWeight:FontWeight.w900))));
