@@ -55,37 +55,37 @@ jobs:
           if gradle_kts.is_file():
               gradle_file = gradle_kts
               source = gradle_file.read_text()
-              compile_options = re.search(r"(?m)^\\s*compileOptions\\s*\\{", source)
+              compile_options = re.search(r"(?m)^\s*compileOptions\s*\{", source)
               if not compile_options:
                   raise SystemExit(f"Missing compileOptions block in {gradle_file}")
 
               if "isCoreLibraryDesugaringEnabled" not in source:
                   insert_at = compile_options.end()
-                  source = source[:insert_at] + "\\n        isCoreLibraryDesugaringEnabled = true" + source[insert_at:]
+                  source = source[:insert_at] + "\n        isCoreLibraryDesugaringEnabled = true" + source[insert_at:]
 
               if "desugar_jdk_libs" not in source:
                   source = source.rstrip() + (
-                      '\\n\\ndependencies {\\n'
-                      '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\\n'
-                      '}\\n'
+                      '\n\ndependencies {\n'
+                      '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n'
+                      '}\n'
                   )
 
           elif gradle_groovy.is_file():
               gradle_file = gradle_groovy
               source = gradle_file.read_text()
-              compile_options = re.search(r"(?m)^\\s*compileOptions\\s*\\{", source)
+              compile_options = re.search(r"(?m)^\s*compileOptions\s*\{", source)
               if not compile_options:
                   raise SystemExit(f"Missing compileOptions block in {gradle_file}")
 
               if "coreLibraryDesugaringEnabled" not in source:
                   insert_at = compile_options.end()
-                  source = source[:insert_at] + "\\n        coreLibraryDesugaringEnabled true" + source[insert_at:]
+                  source = source[:insert_at] + "\n        coreLibraryDesugaringEnabled true" + source[insert_at:]
 
               if "desugar_jdk_libs" not in source:
                   source = source.rstrip() + (
-                      "\\n\\ndependencies {\\n"
-                      "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\\n"
-                      "}\\n"
+                      "\n\ndependencies {\n"
+                      "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'\n"
+                      "}\n"
                   )
           else:
               raise SystemExit("Flutter did not generate android/app/build.gradle(.kts)")
