@@ -45,6 +45,32 @@ jobs:
             flutter create --platforms=android --org com.ujexa.health --project-name ujexa_health .
           fi
 
+      - name: Prepare launcher artwork and app identity
+        shell: bash
+        run: |
+          python3 -m pip install --user Pillow
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+
+          source = Image.open("assets/ujexa_health_mark.png").convert("RGBA")
+          canvas = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
+          source.thumbnail((340, 340), Image.Resampling.LANCZOS)
+          canvas.alpha_composite(source, ((512 - source.width) // 2, (512 - source.height) // 2))
+          output = Path("assets/ujexa_health_launcher_foreground.png")
+          canvas.save(output, optimize=True)
+          print(f"Prepared padded adaptive launcher foreground: {output}")
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          xml = manifest.read_text()
+          import re
+          xml, count = re.subn(r'android:label="[^"]+"', 'android:label="Ujexa Health"', xml, count=1)
+          if count != 1:
+              raise SystemExit("Could not set Android application label")
+          manifest.write_text(xml)
+          print("Android launcher label set to Ujexa Health")
+          PY
+
       - name: Configure Android release build
         shell: bash
         run: |
