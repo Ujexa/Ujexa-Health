@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'data/encrypted_record_store.dart';
@@ -554,72 +555,136 @@ class _RecordsPageState extends State<RecordsPage> {
   };
 }
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.onAdd});
   final VoidCallback onAdd;
-  static const ink = Color(0xFF171B3D);
-  @override
-  Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-    children: [
-      Row(children: [
-        Image.asset('assets/ujexa_health_mark.png', width: 42, height: 42, fit: BoxFit.contain),
-        const SizedBox(width: 8),
-        const Text('Ujexa Health', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: ink)),
-        const Spacer(),
-        IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationCenterPage())), icon: const Icon(Icons.notifications_none)),
-        InkWell(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PatientProfilePage())), customBorder: const CircleBorder(), child: const CircleAvatar(backgroundColor: Color(0xFFE9DDFF), child: Text('P', style: TextStyle(color: ink)))),
-      ]),
-      const SizedBox(height: 20),
-      const Text('Your health, in one place', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800, color: ink)),
-      const SizedBox(height: 5),
-      const Text('A clearer picture begins with the information you choose to keep.', style: TextStyle(color: Color(0xFF69708E))),
-      const SizedBox(height: 20),
-      FutureBuilder<List<PatientRecord>>(
-        future: patientRecords.readAll(),
-        builder: (context, snapshot) {
-          final count = snapshot.data?.length ?? 0;
-          return Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(colors: [Color(0xFFF3EAFF), Color(0xFFE2D9FF)]),
-            ),
-            child: Row(children: [
-              const Icon(Icons.favorite_outline, size: 42, color: Color(0xFF7938DB)),
-              const SizedBox(width: 16),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Your personal health record', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: ink)),
-                const SizedBox(height: 4),
-                Text(snapshot.hasError ? 'Encrypted storage is currently unavailable.' : '$count patient-entered record${count == 1 ? '' : 's'} on this device.',
-                  style: const TextStyle(color: Color(0xFF69708E))),
-              ])),
-            ]),
-          );
-        },
-      ),
-      const SizedBox(height: 16),
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFECECF4))),
-        child: const Text('Your records are encrypted on this device. Entries you create are labelled patient-reported until an authorized verification process is available.',
-          style: TextStyle(color: Color(0xFF69708E), height: 1.4)),
-      ),
-      const SizedBox(height: 24),
-      const Text('Quick actions', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: ink)),
-      const SizedBox(height: 12),
-      Wrap(spacing: 9, runSpacing: 9, children: [
-        QuickAction(icon: Icons.favorite, label: 'Log vitals', color: const Color(0xFFFFF0F4), onTap: () => _open(context, 'Vitals')),
-        QuickAction(icon: Icons.medication_outlined, label: 'Medication log', color: const Color(0xFFF0EAFE), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MedicationManagementPage()))),
-        QuickAction(icon: Icons.document_scanner_outlined, label: 'Scan document', color: const Color(0xFFE9F5FF), onTap: () => _open(context, 'Medical document')),
-        QuickAction(icon: Icons.medical_services_outlined, label: 'Log checkup', color: const Color(0xFFFFF0E8), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckupForm()))),
-        QuickAction(icon: Icons.grid_view_rounded, label: 'More', color: const Color(0xFFF1F3FF), onTap: onAdd),
-      ]),
-    ],
-  );
-  static void _open(BuildContext context, String name) => Navigator.push(context, MaterialPageRoute(builder: (_) => ClinicalRecordForm(kind: name)));
+  @override State<DashboardPage> createState() => _DashboardPageState();
 }
 
+class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
+  static const ink = Color(0xFF171B3D);
+  static const muted = Color(0xFF77758D);
+  static const _facts = <String>[
+    'Your heart beats around 100,000 times in a typical day.',
+    'Water helps regulate body temperature and transport nutrients.',
+    'Regular movement can support heart health, sleep and mood.',
+    'Handwashing with soap helps reduce the spread of many infections.',
+    'A consistent sleep schedule can support your body clock.',
+    'Blood pressure is recorded with two numbers: systolic and diastolic.',
+    'Vaccination helps train the immune system to recognize specific infections.',
+    'Your skin is the body’s largest organ.',
+    'The brain uses a substantial share of the body’s energy.',
+    'A varied diet can help provide the range of nutrients your body needs.',
+    'Rest and recovery are important parts of a balanced exercise routine.',
+    'Keeping a list of medicines can help during healthcare appointments.',
+    'Teeth benefit from brushing twice daily with fluoride toothpaste.',
+    'Small, consistent health habits are often easier to maintain than sudden changes.',
+    'A symptom diary can help you describe patterns and timing to a clinician.',
+    'Physical activity can benefit health even when split into shorter sessions.',
+    'Reading medicine labels carefully helps prevent avoidable dosing mistakes.',
+  ];
+  late final String _fact;
+  late final AnimationController _motion;
+  late final Future<List<PatientRecord>> _records;
+
+  @override void initState() {
+    super.initState();
+    _fact = _facts[math.Random.secure().nextInt(_facts.length)];
+    _records = patientRecords.readAll();
+    _motion = AnimationController(vsync: this, duration: const Duration(milliseconds: 2400))..repeat(reverse: true);
+  }
+  @override void dispose() { _motion.dispose(); super.dispose(); }
+
+  Widget _action({required IconData icon, required String label, required Color tint, required Color accent, required VoidCallback onTap, required int index}) =>
+    TweenAnimationBuilder<double>(
+      tween: Tween(begin: .92, end: 1), duration: Duration(milliseconds: 380 + index * 75), curve: Curves.easeOutBack,
+      builder: (context, value, child) => Transform.scale(scale: value, child: child),
+      child: Material(
+        color: tint, borderRadius: BorderRadius.circular(23),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(23), onTap: onTap,
+          child: SizedBox(height: 116, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(icon, size: 30, color: accent), const SizedBox(height: 10),
+            Text(label, style: const TextStyle(color: ink, fontSize: 13, fontWeight: FontWeight.w800)),
+          ])),
+        ),
+      ),
+    );
+
+  @override Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    return ListView(padding: const EdgeInsets.fromLTRB(20, 18, 20, 110), children: [
+      Row(children: [
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('YOUR HEALTH SPACE', style: TextStyle(color: muted, fontSize: 10, letterSpacing: 1.8, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 5),
+          Text('A healthier you,\none step at a time.', style: TextStyle(fontSize: 25, height: 1.13, fontWeight: FontWeight.w900, letterSpacing: -.5, color: textColor)),
+        ])),
+        AnimatedBuilder(animation: _motion, builder: (context, child) => Transform.translate(offset: Offset(0, -3 * _motion.value), child: child),
+          child: Container(width: 66, height: 66, padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFECE3FF),
+              boxShadow: [BoxShadow(color: const Color(0xFF7938DB).withValues(alpha: .13), blurRadius: 18, spreadRadius: 2)]),
+            child: Image.asset('assets/ujexa_health_mark.png', fit: BoxFit.contain))),
+      ]),
+      const SizedBox(height: 22),
+      FutureBuilder<List<PatientRecord>>(future: _records, builder: (context, snapshot) {
+        final count = snapshot.data?.length;
+        return Container(
+          padding: const EdgeInsets.all(19),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(25),
+            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF8B56E8), Color(0xFF6333C3)]),
+            boxShadow: [BoxShadow(color: const Color(0xFF7938DB).withValues(alpha: .20), blurRadius: 20, offset: const Offset(0, 9))]),
+          child: Row(children: [
+            Container(width: 48, height: 48, decoration: BoxDecoration(color: Colors.white.withValues(alpha: .16), borderRadius: BorderRadius.circular(17)),
+              child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 27)),
+            const SizedBox(width: 14),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('Your health record', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 3),
+              Text(snapshot.hasError ? 'Record unavailable' : count == null ? 'Loading your records…' : '$count ${count == 1 ? 'entry' : 'entries'} saved',
+                style: TextStyle(color: Colors.white.withValues(alpha: .82), fontSize: 12)),
+            ])),
+            Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.white.withValues(alpha: .8)),
+          ]),
+        );
+      }),
+      const SizedBox(height: 25),
+      Row(children: [
+        Text('Quick actions', style: TextStyle(color: textColor, fontSize: 19, fontWeight: FontWeight.w900)),
+        const Spacer(),
+        TextButton.icon(onPressed: widget.onAdd, icon: const Icon(Icons.grid_view_rounded, size: 16), label: const Text('More')),
+      ]),
+      const SizedBox(height: 9),
+      GridView.count(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1.42, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), children: [
+        _action(icon: Icons.favorite_rounded, label: 'Log vitals', tint: const Color(0xFFFFEEF2), accent: const Color(0xFFD94F78), onTap: () => _open(context, 'Vitals'), index: 0),
+        _action(icon: Icons.medication_rounded, label: 'Medication', tint: const Color(0xFFF0EAFE), accent: const Color(0xFF7938DB), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MedicationManagementPage())), index: 1),
+        _action(icon: Icons.document_scanner_rounded, label: 'Scan document', tint: const Color(0xFFE9F5FF), accent: const Color(0xFF3977C8), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DocumentCaptureForm())), index: 2),
+        _action(icon: Icons.medical_services_rounded, label: 'Log checkup', tint: const Color(0xFFFFF0E7), accent: const Color(0xFFD77B39), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckupForm())), index: 3),
+      ]),
+      const SizedBox(height: 20),
+      AnimatedBuilder(animation: _motion, builder: (context, child) => Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(color: dark ? const Color(0xFF242034) : const Color(0xFFF0ECFA), borderRadius: BorderRadius.circular(23),
+          border: Border.all(color: const Color(0xFF9C79DF).withValues(alpha: .18 + .12 * _motion.value))),
+        child: child),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(width: 38, height: 38, decoration: BoxDecoration(color: const Color(0xFF7938DB).withValues(alpha: .12), borderRadius: BorderRadius.circular(13)),
+            child: const Icon(Icons.lightbulb_rounded, color: Color(0xFF7938DB), size: 22)),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('DID YOU KNOW?', style: TextStyle(color: Color(0xFF7938DB), fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 7),
+            Text(_fact, style: TextStyle(color: textColor, fontSize: 14, height: 1.4, fontWeight: FontWeight.w600)),
+          ])),
+        ])),
+      const SizedBox(height: 14),
+      Center(child: Text('Your records. Your choices. Your health.', style: TextStyle(color: muted, fontSize: 11))),
+    ]);
+  }
+
+  static void _open(BuildContext context, String name) => Navigator.push(context, MaterialPageRoute(builder: (_) => ClinicalRecordForm(kind: name)));
+}
 
 class _Stage15InsightBundle {
   const _Stage15InsightBundle(this.insights,this.network,this.adherence);
@@ -1130,7 +1195,7 @@ class _StageCaptureFormState extends State<StageCaptureForm>{
       const SizedBox(height:10),TextField(controller:c,decoration:const InputDecoration(labelText:'Location',border:OutlineInputBorder())),
     ]else if(['Lifestyle entry','Meal','Activity','Sleep'].contains(widget.kind))...[
       DropdownButtonFormField(value:category,decoration:const InputDecoration(labelText:'Category'),items:const ['nutrition','activity','sleep','hydration','other'].map((x)=>DropdownMenuItem(value:x,child:Text(x))).toList(),onChanged:(v)=>setState(()=>category=v??'nutrition')),
-      const SizedBox(height:10),TextField(controller:a,decoration:const InputDecoration(labelText:switch(widget.kind){'Meal'=>'What did you eat?','Activity'=>'What activity did you do?','Sleep'=>'Describe your sleep',_=>'Describe the entry'},border:OutlineInputBorder())),
+      const SizedBox(height:10),TextField(controller:a,decoration:InputDecoration(labelText:switch(widget.kind){'Meal'=>'What did you eat?','Activity'=>'What activity did you do?','Sleep'=>'Describe your sleep',_=>'Describe the entry'},border:OutlineInputBorder())),
       const SizedBox(height:10),TextField(controller:b,keyboardType:TextInputType.number,decoration:const InputDecoration(labelText:'Optional numeric amount',border:OutlineInputBorder())),
       const SizedBox(height:10),TextField(controller:c,decoration:const InputDecoration(labelText:'Unit (optional)',border:OutlineInputBorder())),
     ]else if(widget.kind=='Preventive care')...[
