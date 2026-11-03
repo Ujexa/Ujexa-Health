@@ -53,7 +53,7 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
     if(mounted)setState((){});
   }
   @override Widget build(BuildContext context)=>Scaffold(
-    backgroundColor:const Color(0xFFF8F8FD),
+    backgroundColor:Theme.of(context).scaffoldBackgroundColor,
     appBar:AppBar(title:const Text('Notification centre',style:TextStyle(fontWeight:FontWeight.w800,color:ink)),
       actions:[TextButton(onPressed:()async{await center.markAllRead();setState((){});},child:const Text('Mark all read'))]),
     floatingActionButton:FloatingActionButton.extended(onPressed:_create,backgroundColor:purple,
@@ -67,15 +67,15 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
               const Text('Your attention, protected.',style:TextStyle(color:Colors.white,fontSize:18,fontWeight:FontWeight.w800)),
               Text('${center.unreadCount} unread · ${center.items.length} saved notices',style:const TextStyle(color:Color(0xFFE4D8FF))) ]))])),
         const SizedBox(height:20),
-        const Text('YOUR INBOX',style:TextStyle(color:Color(0xFF777C96),fontWeight:FontWeight.w800,letterSpacing:1.2,fontSize:11)),
+        const Text('YOUR INBOX',style:TextStyle(fontWeight:FontWeight.w800,letterSpacing:1.2,fontSize:11)),
         const SizedBox(height:8),
-        if(center.items.isEmpty) Container(padding:const EdgeInsets.all(24),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(20)),
+        if(center.items.isEmpty) Container(padding:const EdgeInsets.all(24),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(20)),
           child:const Column(children:[Icon(Icons.notifications_off_outlined,size:38,color:Color(0xFF9A91B3)),
             SizedBox(height:8),Text('All quiet here',style:TextStyle(fontWeight:FontWeight.w800,color:ink,fontSize:17)),
-            Text('Only reminders you create or important app events will appear here.',textAlign:TextAlign.center,style:TextStyle(color:Color(0xFF777C96))) ]))
+            Text('Only reminders you create or important app events will appear here.',textAlign:TextAlign.center,style:TextStyle()) ]))
         else ...center.items.map((n)=>Padding(padding:const EdgeInsets.only(bottom:9),child:InkWell(
           borderRadius:BorderRadius.circular(18),onTap:()async{await center.markRead(n.id);setState((){});},
-          child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),
+          child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerLow,borderRadius:BorderRadius.circular(18),
             border:Border.all(color:n.read?const Color(0xFFEDECF4):_tone(n.kind).withOpacity(.35))),
             child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
               Container(width:42,height:42,decoration:BoxDecoration(color:_tone(n.kind).withOpacity(.11),borderRadius:BorderRadius.circular(14)),
@@ -83,7 +83,7 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
               const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
                 Row(children:[Expanded(child:Text(n.title,style:const TextStyle(fontWeight:FontWeight.w800,color:ink))),
                   if(!n.read)Container(width:7,height:7,decoration:BoxDecoration(color:_tone(n.kind),shape:BoxShape.circle))]),
-                const SizedBox(height:4),Text(n.body,style:const TextStyle(color:Color(0xFF69708E),height:1.3)),
+                const SizedBox(height:4),Text(n.body,style:const TextStyle(height:1.3)),
                 const SizedBox(height:6),Text('${n.kind.name.toUpperCase()}  ·  ${n.createdAt.toLocal().toString().substring(0,16)}',
                   style:TextStyle(fontSize:10,fontWeight:FontWeight.w800,color:_tone(n.kind)))
               ]))
@@ -92,6 +92,6 @@ class _NotificationCenterPageState extends State<NotificationCenterPage> {
         const Text('Sound and delivery',style:TextStyle(fontSize:16,fontWeight:FontWeight.w800,color:ink)),
         const SizedBox(height:5),
         const Text('Scheduled alerts use the device notification sound and vibration. Delivery depends on OS permission, battery policy and device settings.',
-          style:TextStyle(color:Color(0xFF69708E),height:1.35,fontSize:12))
+          style:TextStyle(height:1.35,fontSize:12))
       ])));
 }
