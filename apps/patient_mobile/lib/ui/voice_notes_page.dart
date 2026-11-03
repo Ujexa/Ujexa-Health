@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import '../data/patient_record_repository.dart';
+import '../data/encrypted_document_store.dart';
 
 class VoiceNotesPage extends StatefulWidget {
-  const VoiceNotesPage({super.key});
+  const VoiceNotesPage({super.key, required this.records, required this.documents});
+  final PatientRecordRepository records;
+  final EncryptedDocumentStore documents;
   @override State<VoiceNotesPage> createState()=>_VoiceNotesPageState();
 }
 class _VoiceNotesPageState extends State<VoiceNotesPage> with SingleTickerProviderStateMixin {
@@ -21,7 +24,7 @@ class _VoiceNotesPageState extends State<VoiceNotesPage> with SingleTickerProvid
   @override void initState(){super.initState();_load();}
   @override void dispose(){_pulse.dispose();_recorder.dispose();_player.dispose();_title.dispose();super.dispose();}
   Future<void> _load() async {
-    final all=await patientRecords.readAll();
+    final all=await widget.records.readAll();
     if(!mounted)return;
     setState(()=>_notes=all.where((r)=>r.resourceType=='document_reference'&&r.payload['document_type']=='other'&&r.payload['media_type']=='audio/m4a').toList());
   }
@@ -32,9 +35,9 @@ class _VoiceNotesPageState extends State<VoiceNotesPage> with SingleTickerProvid
       try{
         final bytes=await File(path).readAsBytes();
         if(bytes.isEmpty)throw const FormatException('Recording was empty');
-        final blob=await encryptedDocuments.save(Uint8List.fromList(bytes));
+        final blob=await widget.documents.save(Uint8List.fromList(bytes));
         final title=_title.text.trim().isEmpty?'Voice note · ${DateTime.now().toLocal().toString().substring(0,16)}':_title.text.trim();
-        await patientRecords.create(resourceType:'document_reference',fields:{
+        await widget.records.create(resourceType:'document_reference',fields:{
           'document_type':'other','title':title,'media_type':'audio/m4a','encrypted_blob_id':blob,
           'document_date':DateTime.now().toUtc().toIso8601String(),'source':'patient_voice_note','storage':'encrypted_on_device',
         });
@@ -54,7 +57,7 @@ class _VoiceNotesPageState extends State<VoiceNotesPage> with SingleTickerProvid
   Future<void> _play(PatientRecord note) async {
     if(_playingId==note.id){await _player.stop();setState(()=>_playingId=null);return;}
     try{
-      final bytes=await encryptedDocuments.read(note.payload['encrypted_blob_id'].toString());
+      final bytes=await widget.documents.read(note.payload['encrypted_blob_id'].toString());
       final dir=await getTemporaryDirectory();final file=File('${dir.path}/ujexa_playback_${note.id}.m4a');
       await file.writeAsBytes(bytes,flush:true);setState(()=>_playingId=note.id);
       await _player.play(DeviceFileSource(file.path));
