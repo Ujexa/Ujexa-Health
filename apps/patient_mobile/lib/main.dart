@@ -219,8 +219,8 @@ class RecordsPage extends StatefulWidget {
 }
 
 class _RecordsPageState extends State<RecordsPage> {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF171B3D);
+  Color get muted => Theme.of(context).brightness == Brightness.dark ? const Color(0xFFD0C6E8) : const Color(0xFF69708E);
   late Future<List<PatientRecord>> _future;
   final _search = TextEditingController();
   String _category = 'all';
@@ -572,8 +572,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF171B3D);
+  Color get muted => Theme.of(context).brightness == Brightness.dark ? const Color(0xFFD0C6E8) : const Color(0xFF69708E);
   static const _facts = <String>[
     'Your heart beats around 100,000 times in a typical day.',
     'Water helps regulate body temperature and transport nutrients.',
@@ -694,8 +694,8 @@ class HealthInsightsPage extends StatefulWidget {
 }
 
 class _HealthInsightsPageState extends State<HealthInsightsPage> {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF171B3D);
+  Color get muted => Theme.of(context).brightness == Brightness.dark ? const Color(0xFFD0C6E8) : const Color(0xFF69708E);
   late Future<_Stage15InsightBundle> _future;
 
   @override
@@ -1317,7 +1317,7 @@ class AddRecordSheet extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(18, 12, 18, MediaQuery.of(context).viewInsets.bottom + 16),
         decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
         child: Column(children: [
-          Container(width: 44, height: 5, decoration: BoxDecoration(color: const Color(0xFFC7BFDC), borderRadius: BorderRadius.circular(5))),
+          Container(width: 44, height: 5, decoration: BoxDecoration(color: Theme.of(context).colorScheme.outline, borderRadius: BorderRadius.circular(5))),
           const SizedBox(height: 16),
           const Align(alignment: Alignment.centerLeft, child: Text('Add to your health record', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800))),
           const SizedBox(height: 12),
@@ -1329,7 +1329,7 @@ class AddRecordSheet extends StatelessWidget {
             itemCount: actions.length,
             itemBuilder: (context, index) {
               final action = actions[index];
-              return Material(color: const Color(0xFFF1EAFF), borderRadius: BorderRadius.circular(18), child: InkWell(
+              return Material(color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.surfaceContainerHighest : const Color(0xFFF1EAFF), borderRadius: BorderRadius.circular(18), child: InkWell(
                 borderRadius: BorderRadius.circular(18), onTap: () => onSelect(action),
                 child: Padding(padding: const EdgeInsets.all(8), child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1337,7 +1337,7 @@ class AddRecordSheet extends StatelessWidget {
                     Icon(_icon(action), color: const Color(0xFF7938DB), size: 27),
                     const SizedBox(height: 7),
                     Flexible(child: Text(action, textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600))),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface))),
                   ],
                 )),
               ));
@@ -1826,8 +1826,8 @@ class MedicationManagementPage extends StatefulWidget {
 }
 
 class _MedicationManagementPageState extends State<MedicationManagementPage> {
-  static const ink = Color(0xFF171B3D);
-  static const muted = Color(0xFF69708E);
+  Color get ink => Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF171B3D);
+  Color get muted => Theme.of(context).brightness == Brightness.dark ? const Color(0xFFD0C6E8) : const Color(0xFF69708E);
   late Future<List<PatientRecord>> _future;
   @override
   void initState() { super.initState(); _future = _loadAndReconcileSchedules(); }
