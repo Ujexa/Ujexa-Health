@@ -1071,7 +1071,7 @@ class _DocumentPromotionWorkspaceState extends State<DocumentPromotionWorkspace>
               Container(width:double.infinity,padding:const EdgeInsets.all(10),decoration:BoxDecoration(color:const Color(0xFFF5F2FA),borderRadius:BorderRadius.circular(10)),child:Text('Source evidence: $evidence',style:const TextStyle(fontSize:12))),
               const SizedBox(height:10),
               if(kind=='lab_result_candidate')...[
-                TextField(controller:_controller('${doc.id}:$page:$evidence:name',fields['test_name']??''),decoration:const InputDecoration(labelText:'Test name',border:OutlineInputBorder())),
+                TextField(controller:_controller('${doc.id}:$page:$evidence:name',fields['test_name']??''),decoration:const InputDecoration(labelText:'Test name')),
                 const SizedBox(height:8),
                 TextField(controller:_controller('${doc.id}:$page:$evidence:value',fields['value']??''),decoration:const InputDecoration(labelText:'Result and unit',border:OutlineInputBorder())),
                 if(fields['reference_range']!=null)Text('Source reference range: ${fields['reference_range']}',style:const TextStyle(fontSize:11)),
@@ -1128,9 +1128,9 @@ class _StageCaptureFormState extends State<StageCaptureForm>{
       TextField(controller:a,decoration:const InputDecoration(labelText:'Appointment title',border:OutlineInputBorder())),
       const SizedBox(height:10),TextField(controller:b,decoration:const InputDecoration(labelText:'Clinician / provider',border:OutlineInputBorder())),
       const SizedBox(height:10),TextField(controller:c,decoration:const InputDecoration(labelText:'Location',border:OutlineInputBorder())),
-    ]else if(widget.kind=='Lifestyle entry')...[
+    ]else if(['Lifestyle entry','Meal','Activity','Sleep'].contains(widget.kind))...[
       DropdownButtonFormField(value:category,decoration:const InputDecoration(labelText:'Category'),items:const ['nutrition','activity','sleep','hydration','other'].map((x)=>DropdownMenuItem(value:x,child:Text(x))).toList(),onChanged:(v)=>setState(()=>category=v??'nutrition')),
-      const SizedBox(height:10),TextField(controller:a,decoration:const InputDecoration(labelText:'Describe the entry',border:OutlineInputBorder())),
+      const SizedBox(height:10),TextField(controller:a,decoration:const InputDecoration(labelText:switch(widget.kind){'Meal'=>'What did you eat?','Activity'=>'What activity did you do?','Sleep'=>'Describe your sleep',_=>'Describe the entry'},border:OutlineInputBorder())),
       const SizedBox(height:10),TextField(controller:b,keyboardType:TextInputType.number,decoration:const InputDecoration(labelText:'Optional numeric amount',border:OutlineInputBorder())),
       const SizedBox(height:10),TextField(controller:c,decoration:const InputDecoration(labelText:'Unit (optional)',border:OutlineInputBorder())),
     ]else if(widget.kind=='Preventive care')...[
@@ -1328,7 +1328,7 @@ class _CheckupFormState extends State<CheckupForm> {
       const Text('Record a visit', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF171B3D))),
       const SizedBox(height: 6), const Text('Capture what happened and what needs to happen next.', style: TextStyle(color: Color(0xFF69708E))),
       const SizedBox(height: 20),
-      DropdownButtonFormField<String>(value: type, decoration: const InputDecoration(labelText: 'Visit type', border: OutlineInputBorder()), items: ['Routine checkup','Consultation','Screening','Follow-up','Urgent visit','Other'].map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(), onChanged:(v)=>setState(()=>type=v!)),
+      DropdownButtonFormField<String>(value: type, decoration: const InputDecoration(labelText: 'Visit type'), items: ['Routine checkup','Consultation','Screening','Follow-up','Urgent visit','Other'].map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(), onChanged:(v)=>setState(()=>type=v!)),
       const SizedBox(height: 14),
       OutlinedButton.icon(onPressed: () async { final d=await showDatePicker(context:context, initialDate:date, firstDate:DateTime(2000), lastDate:DateTime(2100)); if(d!=null)setState(()=>date=d); }, icon: const Icon(Icons.calendar_today), label: Text('Visit date: ${date.year}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')}')),
       const SizedBox(height: 14),
