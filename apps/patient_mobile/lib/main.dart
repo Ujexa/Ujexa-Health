@@ -159,7 +159,17 @@ class _PatientShellState extends State<PatientShell> {
     return Scaffold(
       drawer: Drawer(child: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Padding(padding: const EdgeInsets.fromLTRB(20,24,20,20), child: Row(children: [
-          Image.asset('assets/ujexa_health_mark.png', width: 48, height: 48), const SizedBox(width: 12),
+          Container(
+            width: 48, height: 48, padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFFF4F0E6)
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Image.asset('assets/ujexa_health_mark.png', fit: BoxFit.contain),
+          ),
+          const SizedBox(width: 12),
           const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Ujexa Health', style: TextStyle(fontSize: 19,fontWeight: FontWeight.w900)), Text('Your health, in your hands', style: TextStyle(fontSize: 11,color: Color(0xFF89839B)))])),
         ])),
         const Divider(height: 1),
@@ -179,8 +189,16 @@ class _PatientShellState extends State<PatientShell> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor, surfaceTintColor: Colors.transparent,
         leading: Builder(builder:(context)=>IconButton(tooltip:'Open navigation',icon:const Icon(Icons.menu_rounded),onPressed:()=>Scaffold.of(context).openDrawer())),
         title: Row(mainAxisSize:MainAxisSize.min,children:[
-          Container(width:32,height:32,decoration:BoxDecoration(color:Theme.of(context).colorScheme.surfaceContainerHighest,shape:BoxShape.circle),
-            child:ClipOval(child:Image.asset('assets/ujexa_health_mark.png',fit:BoxFit.cover))),
+          Container(
+            width: 34, height: 34, padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFFF4F0E6)
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset('assets/ujexa_health_mark.png', fit: BoxFit.contain),
+          ),
           const SizedBox(width:8),
           Text('Ujexa Health',style:TextStyle(fontWeight:FontWeight.w900,fontSize:16,letterSpacing:-.3)),
         ]),
